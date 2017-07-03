@@ -1,0 +1,471 @@
+# ECMAScript 6 notes
+
+## Naming - The most confusing part
+
+ECMAScript is defined in the ECMA-262 standard
+
+JavaScript used in browsers is a superset of ECMAScript -- it adds extra stuff to handle the DOM
+
+ECMAScript 3 was introduced in 1999
+
+in 2007 TC-39 (the committee responsible for developing ECMAScript) started draft for ECMAScript 4. It proposed *lots*, like syntax changes, modules, classical inheritance.
+
+Folk thought it was trying to acheive too much, so an alternative, slimmed down, version was proposed -- this is ECMAScript 3.1.
+
+Operation Harmony -- In 2008 decision made to focus on ECMAScript 3.1 first, then work on introducing features proposed in ECMAScript 4.
+
+ECMAScript 3.1 standardised as ECMAScript 5 (ECMAScript 4 never released to avoid confusion with failed previous proposal)
+
+Work then began on ECMAScript Harmony. ECMAScript 6 was the child of this project, released in 2015.
+
+ECMAScript 6 == ECMAScript 2015.
+
+ECMAScript introduces a heck load of new stuff
+  * patterns
+  * syntax
+  * modules
+
+## Block Bindings
+
+Declare bindings not accessible out of a block
+
+### let
+
+let == var, but limits scope to only current block - prevents variable hoisting occuring from
+
+```
+var x = function(condition) {
+  // actually results in var x; here
+  if (condition) {
+    var x = 1;
+  } else {
+  }
+}
+```
+
+Can't redeclare in same block using `let`
+
+```
+var x = 5;
+var x = 5; // OK
+
+var x = 5;
+let x = 10; // Duplicate delcaration
+```
+
+Declaring variable in new block is fine
+
+```
+var x = 5;
+if (true)
+  let x = 10; // OK
+```
+## Constants
+
+```
+const value = 5; // can't be reset
+```
+
+must be initialized on declaration, since they can't be reset
+
+```
+const value; // syntax error
+```
+
+constants are *not* hoisted and are only available in the block they are declared in.
+
+```
+if (thing) { const x = 5;} // x not available outside of if block
+```
+
+can't redeclare a variable as a constant
+
+```
+var x = 5;
+const x = 10; // error: x is read-only
+```
+
+constants cannot be changed, but the underlying object can
+
+```
+const obj = { a: 1 }
+obj.a = 2 // OK
+```
+
+### Temporal Dead Zone (TDZ)
+
+variables defined using let can only be accessed after they're declared.
+
+```
+for ( .. ) {
+  // TDZ
+  console.log(typeof x); // throws an error
+  let x = 1;
+}
+```
+
+```
+console.log(typeof x); // undefined - Not in TDZ (not in the same block, and above the declaration) - doesn't throw error
+for ( .. ) {
+  let x = 1;
+}
+```
+
+Use block level bindings for for loops
+
+```
+for (let x = 0; x < 10; x++) { ... }
+
+console.log(x); // x is not defined
+```
+using var, the variable is hoisted so is available outside of the for block
+
+```
+for (var i = 0; i < 10; i++) { .. }
+
+console.log(i); // prints 9
+```
+
+## functions in loops
+
+functions in loops have access to the same reference of the variables in the loop
+
+```
+var funcs = [];
+
+for(var i = 0; i < 10; i++) {
+  funcs.push(function() {
+    console.log("first: " + i)
+  });
+};
+
+funcs.forEach(function(func){ func(); }); // prints 10 10 times
+
+var funcs2 = [];
+
+for(var i = 0; i < 10; i++) {
+  funcs2.push((function(i){
+    return function() { console.log("second: " + i); }
+  })(i));// IIFE (immediately invoked function expression has i passed in. it creates copy and stores i)
+};
+
+funcs2.forEach(function(func){ func(); }); // prints 0...9
+```
+
+This ^ looks complicated and block level scoping fixes this. It creates a fresh copy of the variable.
+
+Using let pulls the loop function into a function called `_loop` and invokes it immediately, just like the IIFE, but this is hidden.
+
+```
+var funcs3 = [];
+
+for (let x = 0; x < 10; x++) {
+  funcs3.push(function(){ console.log(x); }); // this is pulled into another function
+}
+
+funcs3.forEach(function(func){ func(); }); // prints 0..9
+```
+
+## Global Block Bindings
+
+```
+var x = "hello";
+```
+
+in a global scope, sets `window.x` to "hello". This would overwrite any value that existed on the window already for `x`.
+
+```
+let x = "hello";
+```
+
+in global scope creates binding in global scope, but no property is added to the `window` object.
+
+You *can't* overwrite a global variable using let/const, you can only *shadow* it.
+
+
+STANDARD: instead of using var everywhere, use const as a default. Only use let if you know the object needs to change.
+
+## Strings
+
+ECMAScript 5 (ECMAScript 3.1) could only handle UTF-16 code points. 
+
+UTF-16 contains 2^16 16 bit code points -- the Basic Multilingual Plane (BMP).
+
+Everything beyond 2^16 is the Supplementary Plane.
+These can't be represented using 16 bits, so UTF joins them together to create *surrogate pairs*
+
+Any "single" character can be either one 16 bit character on the BMP, or two 16 bit characters on the Supplementary Plane.
+
+THIS IS WEIRD AND NOT HANDLED WELL IN ECMAScript 5
+
+for example:
+
+```
+const myText = "𠜎"; // < this is just one chinese character
+
+console.log(myText.length); // 2
+console.log(myText.charAt(0)); // "�"
+console.log(myText.charAt(1)); // "�"
+console.log(myText.charCodeAt(0)); // 55361
+console.log(myText.charCodeAt(1)); //  57102
+```
+
+in ECMAScript 6 you can use
+
+```
+codePointAt(0) > 0xFFFF
+```
+
+to determine if the character is a surrogate pair.
+
+codePointAt returns the full code point even though the code point spans multiple code units
+
+```
+console.log(myText.codePointAt(0)); // 132878
+
+console.log(myText.codePointAt(0) > 0xFFFF); // true
+console.log("andy".codePointAt(0) > 0xFFFF); // false
+```
+
+```
+String.fromCodePoint(codePoint); // gives you the full character represented by the code point
+
+console.log(String.fromCodePoint(132878)); // 𠜎
+```
+
+### Canonical equivalence
+
+two sequences of code points are considered interchangeable
+
+### Compatability
+
+two compatible sequences of codes look different, but can be used interchangeabley in some situations (ae and æ)
+
+Normalise strings before sorting/comparing them
+
+```
+"string".normalize(); // NFC, NFD, NFKC, NFKD are available forms of normalisation
+```
+
+## Regular Expressions
+
+JS expects strings in regex to be 16 bit code units, where each represents a single character
+
+u flag fixes this in ECMAScript 6
+
+u flag stops regex treating surrogate pairs like separate characters
+
+```
+/^.$/.test("𠜎") // false
+/^.$/u.test("𠜎") // true
+```
+
+compares characters instead of codes
+
+### Methods for identifying substrings
+
+```
+includes(string, optional_index)
+startsWith(string, optional_index)
+endsWith(string, optional_index)
+repeat(times) // "x".repeat(4) -> "xxxx"
+```
+
+## backticks
+
+Used to create multiline strings
+
+```
+const text = `hello
+world`;
+console.log(text);
+```
+
+String substitutions
+
+```
+const quantity = 3, price = 2.3;
+console.log(`That will be ${(price * quantity).toFixed(2)}. Thanks!`);
+```
+
+## Tagged Template Literals
+
+```
+function myTag(literals, ...substitutions) {
+  var moods = {5: "happy"};
+  var str = "";
+  for(let i = 0; i < substitutions.length; i++) {
+    str += literals[i];
+    str += moods[substitutions[i]];
+  }
+
+  str += literals[literals.length - 1];
+  return str;
+};
+var mood = 5;
+var thing = myTag`something ${mood} is happening.`;
+console.log(thing);
+// "something happy is happening."
+```
+
+### Raw values in Template Literals
+
+```
+console.log(`hello\nWorld`);
+// "hello
+// world"
+console.log(String.raw`hello\nworld`);
+// "hello\\nworld"
+```
+
+literals array has a `raw` property, so can mimic this `String.raw` inside template:
+
+```
+function myTag(literals, ...substitutions) {
+  var str = "";
+  for(let i = 0; i < substitutions.length; i++) {
+    str += literals.raw[i];
+    str += substitutions[i];
+  }
+
+  str += literals.raw[literals.length - 1];
+  return str;
+};
+```
+
+## Functions
+
+Default parameters are supported in ES6, they weren't in ES5.
+
+```
+// ES5
+function myFunc(id, age, name) {
+  age = (typeof age === "unefined") ? 21 : age;
+  name = (typeof name === "undefined") ? "Andy" : name;
+  // ... 
+};
+// ES6
+function myFunc(id, age = 21, name = "Andy") {
+  // ... 
+};
+```
+
+Note: Passing in undefined as a parameter `myFunc(1, undefined, 21)` would cause the default value to be used.
+BUT passing in `null` would not cause it to be used.
+
+named parameters are detatched from the `arguments` object – just like in ES5 strict mode
+
+```
+function myFunc(id, age = 21, name = "Andy") {
+  console.log(arguments["age"]);
+  age = 10;
+  console.log(arguments["age"]);
+  console.log(arguments.length); // 1
+  // ...
+}
+```
+
+arguments.length is 1 there because the assignment in the constructor doesn't modify the arguments array
+
+## Default Parameter TDZ
+
+Fine to reference parameters in the method definition after they have been initialized in the constructor
+
+```
+function getTwo(value) {
+  return value + 1;
+}
+
+function sum(one, two = getTwo(one)) {
+  console.log(`${one + two}`);
+};
+
+sum(1); // 3
+sum(1,1); // 2
+```
+
+the reverse isn't true though
+
+```
+function getTwo(value) {
+  return value + 1;
+};
+
+function sum(one = two, two) {
+  console.log(`${one + two}`);
+};
+
+sum(1,1) // 2
+sum(undefined, 1) // NaN
+```
+
+second example translates to
+
+```
+let one = two
+let two = 1
+```
+
+and since `let` declarations aren't "hoisted" two is undefined
+
+default parameter value cannot access variables defined in the function body
+
+## Rest Parameters
+
+```
+function pick(object, ...keys) {
+  var result = Object.create(null);
+
+  for (let i = 0; i < keys.length; i++) {
+    result[keys[i]] = object[keys[i]];
+  }
+
+  return result;
+}
+```
+
+1. can only have one rest parameter
+2. rest parameter has to be the last argument in the list
+3. rest parameter cannot live in in object literal setter
+
+```
+let myObj = {
+  // syntax error - can only pass one value into object literal setters - rest are infinite
+  set name(...value) {
+    // ...
+  }
+}
+```
+
+Rest arguments designed to replace `arguments` object
+
+## Function constructor
+
+Metaprogramming in JavaScript
+
+```
+var sum = new Function("first", "second = first", "return first + second");
+var pickFirst = new Function("...args", "return args[0]");
+
+console.log(sum(1,2)); // 3
+console.log(pickFirst(1,2,3)); // 1
+```
+
+Same capabilities as the declarative method to create functions
+
+## Spread Operator
+
+reduce an array into individual arguments for a function
+
+```
+let myNumbers = [1,2,3,5];
+let max = Math.max(...myNumbers);
+
+console.log(max); // 5
+```
+can put the spread operator at any position
+
+```
+let max = Math.max(...myNumbers, 0); // incase there are negative numbers
+```
+
