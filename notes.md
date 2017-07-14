@@ -469,3 +469,60 @@ can put the spread operator at any position
 let max = Math.max(...myNumbers, 0); // incase there are negative numbers
 ```
 
+## Name property
+
+All functions have a name property, which makes debugging easier than in ECMAScript 5
+
+```
+var myFunction = function myFunc() {
+  // ...
+};
+
+myFunction.name; // myFunc
+new Function().name // Anonymous
+(function {}).name // "" < that doesn't seem to have a name?
+myFunction.bind().name // "bound myFunc"
+```
+
+## Dual purpose functions (ECMAScript 5)
+
+Internally, functions are represented as one of two methods [[Call]] or [[Construct]].
+
+### [[Construct]]
+
+function called with `new` means the [[Construct]] method is called.
+
+1. object created
+2. object assigned to this
+3. function executes referencing the object through `this.x`
+4. functions that have a [[Construct]] method are called _constructors_
+
+### [[Call]]
+
+function not called with `new` means the [[Call]] method is called.
+
+1. function executed
+2. any references to this references the global object
+
+## How do you know if a function is called with `new`?
+
+```js
+function Car(colour) {
+  if (this instanceof Car)
+    this.colour = colour;
+  else
+    throw new Error("Must use new");
+}
+
+var car = new Car("red")
+console.log(car.colour); // red
+
+Car.call(car, "blue")
+console.log(car.colour); // blue
+
+console.log(Car("red").colour); // Must use new
+```
+
+Using `Car.call` broke the instanceof check. We didn't use `new`, but `this` was still set to an instance of `Car`, which meant colour was still set.
+
+There's no way to differentiate `new Class` and `Class.apply(...)` or `Class.call(...)`.
