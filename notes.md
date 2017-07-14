@@ -1,5 +1,8 @@
 # ECMAScript 6 notes
 
+A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.com/slicknet)'s amazing book [Understanding ECMAScript 6](http://amzn.eu/iA7V2fr).
+
+
 ## Naming - The most confusing part
 
 ECMAScript is defined in the ECMA-262 standard
