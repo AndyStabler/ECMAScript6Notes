@@ -529,3 +529,135 @@ console.log(Car("red").colour); // Must use new
 Using `Car.call` broke the instanceof check. We didn't use `new`, but `this` was still set to an instance of `Car`, which meant colour was still set.
 
 There's no way to differentiate `new Class` and `Class.apply(...)` or `Class.call(...)`.
+
+### new.target
+
+`new.target` is a _metaproperty_
+
+_metaproperty_: gives meta information about a target (`new` in this case).
+
+when a function's [[Construct]] method is called, `new.target` is filled with the target of the `new` operator (usually the constructor of the newly created object).
+
+if [[Call]] is called, then `new.target` is not filled.
+
+```js
+function Car(colour) {
+  if (typeof new.target !== "undefined")
+    this.colour = colour;
+  else
+    throw new Error("Must use new");
+}
+
+var car = new Car("red")
+console.log(car.colour); // red
+
+Car.call(car, "blue");
+console.log(car.colour); // Must use new
+```
+
+## Block-Level functions
+
+functions can be declared inside a block, this threw an error in ECMAScript 5.
+
+you can use `let` to prevent function definition hoisting.
+
+ECMAScript 6 strict-mode:
+
+```js
+if (true) {
+  // function hoisted
+  console.log(typeof hoisted); // function
+  function hoisted() {}; // doesn't throw error in ES6 ✅
+
+  // function not hoisted with let
+  // TDZ
+  console.log(typeof notHoisted); // undefined
+  let notHoisted = function() {};
+}
+```
+
+in non-strict mode, the method definition is hoisted to the containing function or global scope if they aren't in a function.
+
+## Arrow Functions
+
+1. No `this`, `arguments`, or `new.target` bindings – they're defined by closest containing non-arrow function
+   * this means you avoid having to keep track of `this` when creating an event handler for example.
+2. can't be called with `new`
+  * Arrow functions don't have a [[Construct]] method and so can't be called with `new`.
+3. No `prototype`
+  * no `new` binding, and so no need for `prototype`
+4. Can't ~touch~ change this
+5. No duplicate named parameters
+
+### Examples
+
+```js
+let sum = (first, second) => first + second;
+sum(5,1); // 6
+```
+
+```js
+let singleArg = arg => arg;
+singleArg(1); // 1
+```
+
+```js
+let name = () => "Andy";
+name(); // Andy
+```
+
+```js
+let multiLine = () => {
+  let x = 5;
+  return x;
+};
+```
+
+```js
+let objectLiteral = () => ({ a: 1})'
+objectLiteral() // Object {a: 1}
+```
+
+### Immediately Invoked Function Expressions (IIFE)
+
+```js
+let personModel = ((name) => {
+  return {
+    getName: function() {
+      return name;
+    }
+  };
+})("Andy");
+
+personModel.getName(); // "Andy"
+```
+
+### No `this` binding
+
+```js
+let thing = {
+  handler: function() {
+    document.addEventListener("click", function() {
+      this.thing();
+    }.bind(this), false);
+  },
+  thing: function() {
+    console.log("thing!");
+  }
+};
+```
+
+using `.bind(this)` creates an extra function whose `this` is bound to the current `this`.
+
+```js
+let thing = {
+  handler: function() {
+    document.addEventListener("click", () => this.thing(), false);
+  },
+  thing: function() {
+    console.log("thing!");
+  },
+};
+```
+
+Arrow functions are "throw away" functions – not used to define new types
