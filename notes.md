@@ -618,6 +618,11 @@ let objectLiteral = () => ({ a: 1})'
 objectLiteral() // Object {a: 1}
 ```
 
+```js
+const arr = [5,2,3,4,1];
+arry.sort((a,b) => a - b);
+```
+
 ### Immediately Invoked Function Expressions (IIFE)
 
 ```js
@@ -660,4 +665,74 @@ let thing = {
 };
 ```
 
-Arrow functions are "throw away" functions – not used to define new types
+Arrow functions are "throw away" functions – not used to define new types. Use them where you'd define an anonymous function.
+
+### No `arguments` Binding
+
+There is `arguments` array for the arrow function, but the arrow function can access the `arguments` array of the parent function.
+
+```js
+function createFunctionValue(number) {
+  return () => arguments[0];
+}
+
+const func = createFunctionValue(5);
+console.log(func()); // 5
+```
+
+## Objects
+
+
+[4 object categories](https://www.ecma-international.org/ecma-262/6.0/#sec-terms-and-definitions):
+
+1. Ordinary objects
+  * object has default behaviour for the essential internal methods that must be supported by all objects
+2. Exotic objects
+  * object does **not** have default behaviour for the essential internal methods that must be supported by all objects
+  * Any object not an ordinary object is an exostic one.
+3. Standard objects
+  * object whose semantics are defined by ECMAScript 6 specification
+4. Built-in objects
+  * object specified and supplied by an ECMAScruipt implementation
+
+### Object Literal Syntax Extensions
+
+## Property Initializer Shorthand
+
+No need to repeat parameters
+
+```js
+
+function Person(name, age) {
+  return {
+    name: name,
+    age: age
+  };
+}
+```
+
+```js
+function Person(name, age) {
+  return { name, age };
+}
+```
+
+### Concise Methods
+
+```js
+var person = {
+  name: "Andy",
+  sayName: function() { console.log(`Hiya, ${this.name}`); }
+};
+```
+
+```js
+var person = {
+  name: "Andy",
+  sayName() { console.log(`Hiya, ${this.name}`); }
+};
+```
+
+concise methods are able to use `super`.
+
+
