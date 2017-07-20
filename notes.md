@@ -735,4 +735,20 @@ var person = {
 
 concise methods are able to use `super`.
 
+### Computed Property Names
+
+```js
+let person = {};
+const firstName = "first name";
+person[firstName] = "Andy"; // error inn ECMAScript 5, but fine in ECMAScript 6
+```
+
+expressions are OK too now
+
+```js
+let person = {};
+let prefix = "first";
+person[prefix + "name"] = "Andy";
+```
+
 
