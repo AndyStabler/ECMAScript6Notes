@@ -751,4 +751,61 @@ let prefix = "first";
 person[prefix + "name"] = "Andy";
 ```
 
+Use square brackets when setting a property name in object literal syntax. The square brackets indicate that the name is computed:
+
+```js
+let lastName = "last name";
+
+let person = {
+  "first name": "Andy",
+  [lastName]: "Stabler"
+};
+
+console.log(person["first name"]);
+console.log(person[lastName]);
+```
+
+
+## New Object methods
+
+Methods added here when they don't belong anywhere else
+
+### `Object.is`
+
+works the same as `===` (no type coercion), exception for special cases:
+
+```js
+console.log(-0 === +0); // true
+console.log(Object.is(-0, +0)); // false
+
+console.log(NaN === NaN); // false
+console.log(Object.is(NaN, NaN)); // true
+```
+
+
+### `Object.assign`
+
+Used as a mixin.
+
+```js
+var Woofer = {
+  woof: function() { console.log("woof"); }
+};
+
+var doggo = {};
+Object.assign(doggo, Woofer);
+doggo.woof();
+```
+
+## Duplicate Object Literal Properties
+
+This caused an error in ES5 strict mode, but not in ES6
+
+```js
+var dog = {
+  name: "Max",
+  name: "Barney"
+};
+console.log(dog.name); // Barney
+```
 
