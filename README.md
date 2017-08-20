@@ -719,12 +719,16 @@ function Person(name, age) {
 
 ### Concise Methods
 
+#### Old way
+
 ```js
 var person = {
   name: "Andy",
   sayName: function() { console.log(`Hiya, ${this.name}`); }
 };
 ```
+
+#### Concise way
 
 ```js
 var person = {
@@ -808,4 +812,85 @@ var dog = {
 };
 console.log(dog.name); // Barney
 ```
+
+## Changing an Object's prototype
+
+In ES5 there was no way to change a prototype.
+In ES6 you can do this with the `setPrototypeOf` method.
+
+```js
+let human = {
+  getGreeting() {
+    return "Hiya!";
+  }
+};
+
+let dog = {
+  getGreeting() {
+    return "Bork!";
+  }
+};
+
+let friend = Object.create(human);
+console.log(friend.getGreeting()); // Hiya!
+console.log(Object.getPrototypeOf(friend) === human); // true
+
+Object.setPrototypeOf(friend, dog);
+console.log(friend.getGreeting()); // Bork!
+console.log(Object.getPrototypeOf(friend) === dog); // true
+```
+
+prototype value is stored in the internal-only property [[prototype]]
+`getPrototypeOf` returns the value of this property
+`setPrototypeOf` sets the value of this property
+
+### Super
+
+super can be used to access an object's prototype
+
+```js
+let person = {
+  getGreeting() {
+    return "Hiya";
+  }
+};
+
+let dog = {
+  getGreeting() {
+    return "Bark";
+  }
+};
+
+let friend = {
+  getGreeting() {
+    // return Object.getPrototypeOf(this).getGreeting.call(this) + ", hi!";
+    // this can now be written as
+    return super.getGreeting() + ", hi!";
+  }
+};
+
+Object.setPrototypeOf(friend, dog);
+console.log(friend.getGreeting());
+
+Object.setPrototypeOf(friend, person);
+console.log(friend.getGreeting());
+```
+
+Concise methods are able to use super, but not the usual methods (what's the name for these?)
+
+```js
+let friend = {
+  getGreeting: function() {
+    return super.getGreeting() + ", hi!"; // syntax error - Uncaught SyntaxError: 'super' keyword unexpected here
+  }
+}
+```
+
+`Object.getPrototypeOf` doesn't work with multiple levels of inheritance, but super does!
+
+ECMAScript 6 formally defines "method"s, which ECMAScript 5 didn't do.
+
+Method (in ECMAScript 6): function that has an internal `[[HomeObject]]` property. This references the object to which the method belongs.
+
+if the method isn't assigned to an object it won't have a `[[HomeObject]] set, and so using `super` will not work.
 
