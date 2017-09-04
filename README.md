@@ -894,3 +894,138 @@ Method (in ECMAScript 6): function that has an internal `[[HomeObject]]` propert
 
 if the method isn't assigned to an object it won't have a `[[HomeObject]] set, and so using `super` will not work.
 
+## Destructuring
+
+(This is my favourite bit)
+
+Destructuring makes it super easy to extract data from complex datastructures.
+
+It is available for _Arrays_ and _Objects_.
+
+## Object Destructuring
+
+Object literal on left side of operator:
+
+
+```js
+let andy = {
+  name: "Andy",
+  age: "25"
+};
+
+let {name, age} = andy;
+```
+
+`name` and `age` are now local variables
+
+with ECMAScript 5 this would looks something like:
+
+```js
+let andy = {
+  name: "Andy",
+  age: "25"
+};
+
+var name = andy.name, age = andy.age;
+```
+
+which is _fine_, but this gets complicated over larger data structures.
+
+### Destructuring Assignment
+
+```js
+let node = {
+  type: "toad",
+  size: 5
+};
+
+let type = "frog";
+let size = "2";
+
+({type, size} = node);
+```
+
+We set type and size to new values.
+
+Note how we used parenthesis around the assignment– this was to work around a syntax constraint. Curly braces indicate a block statement,
+which can't appear on the left side of an assignment. The parenthesis signals that the curly brace is an expression and not a block.
+
+Destructuring assignment can be used anywhere a value is expected:
+
+```js
+let node = {
+  type: "toad",
+  size: 5,
+  height: 50,
+  skin: "slimy"
+};
+
+function printDimensions(dimensions) {
+  console.log(`dimensions are ${JSON.stringify(dimensions)}`);
+};
+
+printDimensions({ size, height } =  node);
+// {type: "toad", size: 5, height: 50, skin: "slimy"}
+size;
+// 5
+height;
+// 50
+skin;
+// error - Uncaught ReferenceError: skin is not defined
+```
+
+See how that printed everything and not just size and height? That's because destructuring assignment evaluates to the right side
+of the expression. (I didn't know this when I started writing that example ^ TIL :) )
+
+
+### Default values
+
+```js
+let node = {
+  type: "toad",
+  size: 5,
+  height: 50,
+  skin: "slimy"
+};
+
+let { type, attitude } = node;
+type // toad
+attitude // null
+
+({ type, attitude = "hungry" } = node);
+type // toad
+attitude // hungry
+```
+
+### Assigning to different local varaible names
+
+```js
+let node = {
+  type: "toad",
+  size: 5,
+  height: 50,
+  skin: "slimy"
+};
+
+let { type: animal, skin: texture} = node;
+animal // toad
+texture // slimy
+```
+
+Note that this syntax is the opposite of traditional object literal syntax (name on left of colon, value on the right).
+
+Default values can still be used when using a different local variable name:
+
+```js
+let node = {
+  type: "toad",
+  size: 5,
+  height: 50,
+  skin: "slimy"
+};
+
+let { type: animal, attitude: personality = "hungry" } = node;
+animal // toad
+personality // hungry
+```
+
