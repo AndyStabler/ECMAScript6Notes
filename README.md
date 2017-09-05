@@ -1029,3 +1029,25 @@ animal // toad
 personality // hungry
 ```
 
+
+### Nested Object Destructuring
+
+Identifier before colon in destructuring pattern is the location to inspect. The right side of the colon assigns a value.
+
+Note you can also set the local variable in nested destructuring
+
+```js
+let node = {
+  type: "toad",
+  dimensions: {
+    size: 5,
+    height: 50
+  },
+  skin: "slimy"
+};
+
+let { dimensions: { size: width} } = node;
+width
+// 5
+```
+
