@@ -1051,3 +1051,46 @@ width
 // 5
 ```
 
+## Array Destrutcuring
+
+Use array literal syntax instead of object literal syntax:
+
+```js
+let pets = ['toad', 'snail', 'slime'];
+let [ firstFriend, secondFriend ] = pets;
+firstFriend; // toad
+secondFriend; // slime
+```
+
+The array is not mutated.
+
+You can skip elements:
+
+```js
+let pets = ['toad', 'snail', 'slime'];
+let [ , , friend ] = pets;
+friend; // slime
+```
+
+### Destructuring assinment
+
+No need to use curly braces like we did with object destructuring.
+
+```js
+let pets = ['toad', 'snail', 'slime'];
+let firstFriend = 'crow';
+let seconFriend = 'frog';
+
+[ firstFriend, secondFriend ] = pets;
+firstFriend; // toad
+secondFriend; // snail
+```
+
+Array Destructuring makes it easy to swap variables around
+
+```js
+let a = 1, b = 2;
+[ a, b ] = [ b, a ];
+a; // 2
+b; // 1
+```
