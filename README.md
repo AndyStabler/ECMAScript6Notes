@@ -902,7 +902,7 @@ Destructuring makes it super easy to extract data from complex datastructures.
 
 It is available for _Arrays_ and _Objects_.
 
-## Object Destructuring
+### Object Destructuring
 
 Object literal on left side of operator:
 
@@ -931,7 +931,7 @@ var name = andy.name, age = andy.age;
 
 which is _fine_, but this gets complicated over larger data structures.
 
-### Destructuring Assignment
+#### Destructuring Assignment
 
 ```js
 let node = {
@@ -978,7 +978,7 @@ See how that printed everything and not just size and height? That's because des
 of the expression. (I didn't know this when I started writing that example ^ TIL :) )
 
 
-### Default values
+#### Default values
 
 ```js
 let node = {
@@ -997,7 +997,7 @@ type // toad
 attitude // hungry
 ```
 
-### Assigning to different local varaible names
+#### Assigning to different local varaible names
 
 ```js
 let node = {
@@ -1030,7 +1030,7 @@ personality // hungry
 ```
 
 
-### Nested Object Destructuring
+#### Nested Object Destructuring
 
 Identifier before colon in destructuring pattern is the location to inspect. The right side of the colon assigns a value.
 
@@ -1051,7 +1051,7 @@ width
 // 5
 ```
 
-## Array Destrutcuring
+### Array Destrutcuring
 
 Use array literal syntax instead of object literal syntax:
 
@@ -1072,7 +1072,7 @@ let [ , , friend ] = pets;
 friend; // slime
 ```
 
-### Destructuring assinment
+#### Destructuring assinment
 
 No need to use curly braces like we did with object destructuring.
 
@@ -1095,7 +1095,7 @@ a; // 2
 b; // 1
 ```
 
-### Default values
+#### Default values
 
 ```js
 let friends = ["toad"];
@@ -1104,7 +1104,7 @@ bestFriend; // toad
 secondBestFriend; // crow
 ```
 
-### Nested Array Destructuring
+#### Nested Array Destructuring
 
 ```js
 let friends = ["toad", ["crow", "pigdeon"]];
@@ -1113,7 +1113,7 @@ bestFriend; // toad
 secondBestFriend; // crow
 ```
 
-### Rest Items
+#### Rest Items
 
 ```js
 let friends = ["toad", "crow", "snail"];
@@ -1122,7 +1122,7 @@ bestFriend; // toad
 otherFriends; // [ "crow", "snail" ]
 ```
 
-### Cloning Arrays
+#### Cloning Arrays
 
 In ECMASCript5
 
@@ -1140,7 +1140,7 @@ let [ ...clonedFriends ] = friends;
 
 NB: rest items must be the last item in the destructured array. You can't follow them with a comma.
 
-## Mixed Destructuring (Objects and Arrays)
+### Mixed Destructuring (Objects and Arrays)
 
 ```js
 let node = {
@@ -1166,7 +1166,7 @@ start; // { line: 1, column: 2}
 startIndex; // 0
 ```
 
-## Destructuring in parameters
+### Destructuring in parameters
 
 ```js
 function setCookie(name, value, options) { ... }
