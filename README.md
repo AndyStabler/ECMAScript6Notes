@@ -1094,3 +1094,110 @@ let a = 1, b = 2;
 a; // 2
 b; // 1
 ```
+
+### Default values
+
+```js
+let friends = ["toad"];
+let [ bestFriend, secondBestFriend = "crow" ] = friends;
+bestFriend; // toad
+secondBestFriend; // crow
+```
+
+### Nested Array Destructuring
+
+```js
+let friends = ["toad", ["crow", "pigdeon"]];
+let [ bestFriend, [ secondBestFriend ] ] = friends;
+bestFriend; // toad
+secondBestFriend; // crow
+```
+
+### Rest Items
+
+```js
+let friends = ["toad", "crow", "snail"];
+let [ bestFriend, ...otherFriends ] = friends;
+bestFriend; // toad
+otherFriends; // [ "crow", "snail" ]
+```
+
+### Cloning Arrays
+
+In ECMASCript5
+
+```js
+let friends = ["toad", "crow", "snail"];
+let clonedFriends = friends.concat();
+```
+
+In ECMAScript6
+
+```js
+let friends = ["toad", "crow", "snail"];
+let [ ...clonedFriends ] = friends;
+```
+
+NB: rest items must be the last item in the destructured array. You can't follow them with a comma.
+
+## Mixed Destructuring (Objects and Arrays)
+
+```js
+let node = {
+  loc: {
+    start: {
+      line: 1,
+      column: 2
+    },
+    end: {
+      line: 1,
+      column: 4
+    }
+  },
+  range: [0, 3]
+};
+
+let {
+  loc: { start },
+  range: [ startIndex ]
+} = node;
+
+start; // { line: 1, column: 2}
+startIndex; // 0
+```
+
+## Destructuring in parameters
+
+```js
+function setCookie(name, value, options) { ... }
+```
+
+^ options is hidden– reading the function definition doesn't tell you know what
+you should pass. (That isn't necessarily a bad thing. I think abstracting long
+argument lists into an object is actually good, but in the JS case it is often
+used in such a way that the object passed in isn't obvious. end of tangent)
+
+```js
+function setCookie(name, value, { secure, path, domain, expires }) { ... }
+```
+
+Note that this would throw an error if nothing was passed in for the optional arguments
+
+```js
+setCookie("Andy", 5); // error
+```
+
+missing argument evaluates to undefined, and since
+
+```js
+let { thing } = undefined;
+```
+
+throws an error, this breaks.
+
+You can fix this by providing a default value
+
+```js
+function setCookie(name, value, { secure, path, domain, expires} = {}) { ... }
+setCookie("Andy", 5); // Works ✨
+```
