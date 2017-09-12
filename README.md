@@ -1201,3 +1201,46 @@ You can fix this by providing a default value
 function setCookie(name, value, { secure, path, domain, expires} = {}) { ... }
 setCookie("Andy", 5); // Works ✨
 ```
+
+## Symbols and Symbol Properties
+
+Originally, symbols were introduced as a way to provide private object members.
+Properties with a string name are easy to access and so symbols were used to created non-string property names. Private
+names could not be detected using the usual means.
+
+The goal of privacy was dropped, but symbols still add non-string propery names.
+
+Symbols are a primitive type (along with strings, numbers, booleans, null, and undefined)
+
+### Creating symbols
+
+Symbols don't have a literal form (true for booleans, 42 for numbers)
+
+```js
+let name = Symbol();
+let person = {};
+person[name] = "Andy";
+person[name]; // Andy
+```
+
+You can't call `new Symbol();` because it's a primitive value
+
+Descriptions make things more readable (questionable with a good variable name) and are good practice
+
+```js
+let name = Symbol("first name");
+name; // Symbol(first name)
+```
+
+Symbol's descriptions are stored internally in the `[[Description]]` property
+`[[Description]]` is accessed via `.toString()` on the symbol
+
+### Identifying Symbols
+
+ECMAScript6 extends `typeof` to return "symbol" for symbols.
+
+```js
+let symbol = Symbol("swanky");
+typeof symbol; // symbol
+```
+
