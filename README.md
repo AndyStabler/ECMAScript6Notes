@@ -1244,3 +1244,78 @@ let symbol = Symbol("swanky");
 typeof symbol; // symbol
 ```
 
+### Using Symbols
+
+They can be used where you would use a computed property name
+
+```js
+let firstName = Symbol("first name");
+
+let person = {
+  [firstName]: "Andy"
+};
+
+// make the property read-only
+Object.defineProperty(person, firstName, { writable: false });
+
+let lastName = Symbol("last name");
+
+// another way to make the property read-only
+Object.defineProperties(person, {
+  [lastName]: {
+    value: "Stabler",
+    writable: false
+  }
+});
+person[firstName]; // Andy
+person[firstName] = "Max";
+person[firstName]; // Andy – it's read-only! 😄
+```
+
+### Sharing Symbols
+
+To use symbols effectively you need a way of sharing them throughout your code base. The following for example
+doesn't work as you'd expect.
+
+```js
+let firstName = Symbol("first name");
+
+let person = {
+  [firstName]: "Andy"
+};
+
+function getFirstName(person) {
+  let firstName = Symbol("first name");
+  return person[firstName];
+}
+
+let result = getFirstName(person);
+typeof result; // undefined
+```
+
+✨Introducing✨
+
+```js
+Symbol.for();
+```
+
+This looks up the symbol in the global symbol registry. If it doesn't exist, then it's created and returned.
+
+The following now works:
+
+```js
+let firstName = Symbol.for("first name"); // creates the symbol
+
+let person = {
+  [firstName]: "Andy"
+};
+
+function getFirstName(person) {
+  let firstName = Symbol.for("first name"); // looks up the symbol
+  return person[firstName];
+};
+
+getFirstName(person); // Andy
+```
+
+The global symbol registry is a shared environment, so make sure you add a namespace to symbols to prevent conflicts
