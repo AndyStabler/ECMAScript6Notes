@@ -614,7 +614,7 @@ let multiLine = () => {
 ```
 
 ```js
-let objectLiteral = () => ({ a: 1})'
+let objectLiteral = () => ({ a: 1})
 objectLiteral() // Object {a: 1}
 ```
 
