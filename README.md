@@ -1319,3 +1319,144 @@ getFirstName(person); // Andy
 ```
 
 The global symbol registry is a shared environment, so make sure you add a namespace to symbols to prevent conflicts
+
+### Symbol Coercion
+
+Symbols can't be coerced into strings or integers – this prevents them being used accidentally used as properties
+that would otherwise be expected to behave as symbols.
+
+```js
+let name = Symbol.for("name");
+console.log(`symbol is ${name}`); // TypeError: Cannot convert a Symbol value to a string
+```
+
+This attempts to coerce the symbol into a string and so the error is raised.
+
+Same thing happens if you try to coerce the symbol into a number:
+
+```js
+let name = Symbol.for("name");
+name / 1; // TypeError: Cannot convert a Symbol value to a number
+```
+
+Errors are thrown for arithmetic operators, but not for logical ones. Symbols are non-empty and so are considered
+to be truthy (just like every other non-empty value in JS)
+
+```js
+let name = Symbol.for("name");
+name ? "truthy" : "falsy"; // truthy
+```
+
+### Retrieving symbol properties
+
+```js
+Object.getOwnPropertyNames(); // returns all properties, regardless of their enumerability.
+                              // **Does not** return the symbol properties for an object
+Object.getOwnPropertySymbols(); // returns array of own property symbols
+
+let age = Symbol.for("age");
+
+let human = {
+  name: "Andy",
+  [age]: 25
+};
+
+Object.getOwnPropertyNames(human); // [name]
+Object.getOwnPropertySymbols(human); // [Symbol(age)]
+```
+
+### Exposing Internal Operations with Well-Known Symbols
+
+Well-known symbols: predefined symbols representing behaviours that were previously considered internal-only
+
+Well-known symbols are properties on the `Symbol` object, e.g. `Symbol.match`
+
+The well-known symbols are these:
+
+1. `Symbol.hasInstance`
+2. `Symbol.isConcatSpreadable`
+3. `Symbol.iterator`
+4. `Symbol.match`
+5. `Symbol.replace`
+6. `Symbol.search`
+7. `Symbol.species`
+8. `Symbol.split`
+9. `Symbol.toPrimitive`
+10. `Symbol.toStringTag`
+11. `Symbol.unscopables`
+
+#### Symbol.hasInstance
+
+Used by `instance of` to determine if `x` is an instance of `y`.
+
+```js
+let obj = [];
+obj instanceof Array;
+// equivalient to
+Array[Symbol.hasInstance](obj);
+```
+
+We know that `hasInstace` is a symbol property on the Array object, so passing in the well-known `Symbol.hasInstance`
+returns the `hasInstance` function.
+
+ECMAScript6 redfines `instanceof` as an alias to `hasInstance`
+
+It's a function so you can override it!
+
+```js
+function Slimey() {}
+
+Object.defineProperty(Slimey, Symbol.hasInstance, {
+  value: function(v) {
+    return (["snail", "toad"].includes(v.name))
+  }
+});
+
+let bestFriend = {
+  name: "toad"
+};
+
+let secondBestFriend = {
+  name: "hedgehog"
+};
+
+bestFriend instanceof Slimey; // true
+secondBestFriend instanceof Slimey; // false
+```
+
+`Symbol.hasInstance` is nonwritable, nonconfigurable, and nonenumerable, so to extend it you must use
+`Object.defineProperty`. (It's _open for extension, but closed more modification_)
+
+#### Symbol.isConcatSpreadable
+
+Array#concat concatenates two arrays. If the argument passed in is not an array, then it appends it to the end.
+
+```js
+let arr1 = [1, 2, 3, 4];
+arr1.concat([5, 6, 7]); // [1, 2, 3, 4, 5, 6, 7]
+arr1.concat("hiya"); // [1, 2, 3, 4, "hiya"]
+```
+
+Arrays are automatically split up into theit individual elements. In ECMAScript 6 this functionality is exposed
+through the `isConcatSpreadable` symbol property.
+
+`Symbol.isConcatSpreadable` returns a Boolean that indicates:
+
+1. an object has a `length` property
+2. an object has numeric keys
+3. an object's numeric property values should be added indivudually to result of `concat`
+
+The method isn't implemented by default on standard objects.
+
+```js
+let things = {
+  0: "button",
+  1: "some string",
+  length: 2,
+  [Symbol.isConcatSpreadable]:  true,
+};
+
+let myPocket = ["snacks"].concat(things);
+myPocket; // [ 'snacks', 'button', 'some string' ]
+```
+
