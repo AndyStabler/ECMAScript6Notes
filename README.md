@@ -1493,4 +1493,46 @@ Object.defineProperty(isEgg, Symbol.replace, {
 "two eggs".replace(isEgg); // "two eggs"
 ```
 
+#### Symbol.toPrimitive
+
+It's common to convert objects to a primitive value, e.g. a comparison using `==`
+
+Previously, the primitive value was kept to the JS internals. Now it's exposed and open for extension.
+
+`Symbol.toPrimitive` is a prototype on each standard type
+
+`Symbol.toPrimitive` accepts one argument called `hint`, whose value is either `"number"`, `"string"`, or
+`"default"`. Each defining a preference (or lack of) for the return type.
+
+Standard behaviour is as follows:
+
+If "number" is passed in, return `valueOf()` if it's a primitive, otherwise `toString()` if it's a primitive,
+otherwise raise an error
+
+If "string" is passed in, return `toString()` if it's a primtive, otherwise 'valueOf()` if it's a primtive,
+othwesie raise an error
+
+Here's an example of overriding `Symbol.toPrimitive`:
+
+```js
+function Temperature(degrees) {
+  this.degrees = degrees;
+}
+
+Temperature.prototype[Symbol.toPrimitive] = function(hint) {
+  switch(hint) {
+    case "string":
+      return this.degrees + "c";
+    case "number":
+      return this.degrees;
+    case "default":
+      return this.degrees + " degrees";
+  }
+};
+
+new String(new Temperature(42)); // [String: '42c'] (uses string)
+new Temperature(42) / 2; // 21 (uses number)
+new Temperature(42) + "!"; // '42 degrees!' (uses default)
+```
+
 
