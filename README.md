@@ -1460,3 +1460,37 @@ let myPocket = ["snacks"].concat(things);
 myPocket; // [ 'snacks', 'button', 'some string' ]
 ```
 
+#### Regex Well-known symbols
+
+```js
+Symbol.match
+Symbol.replace
+Symbol.search
+Symbol.split
+```
+
+Default implementations for all of these symbol properties are defined on `Regexp.prototype`.
+
+You can define these symbol properties on any objects so pattern matching can work on things other than strings!
+
+```js
+let isEgg = {
+  [Symbol.match]: function(value) {
+    return value === "egg" ? value : null;
+  }
+};
+
+"egg".match(isEgg); // "egg"
+"spoon".match(isEgg); // null
+
+Object.defineProperty(isEgg, Symbol.replace, {
+  value: function(value, replacement) {
+    return value == "egg" ? "spoon" : value;
+  }
+});
+
+"egg".replace(isEgg); // "spoon"
+"two eggs".replace(isEgg); // "two eggs"
+```
+
+
