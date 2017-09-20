@@ -1535,4 +1535,31 @@ new Temperature(42) / 2; // 21 (uses number)
 new Temperature(42) + "!"; // '42 degrees!' (uses default)
 ```
 
+#### Symbol.toStringTag
 
+Previously, passing objects between environments (between page and an iframe) resulted in knowledge of the object type was lost.
+This was the reason some libraries introduced functions like:
+
+```js
+function isArray(value) {
+  return Object.prototype.toString.call(value) === "[object Array]"
+}
+```
+
+This was a work around. Calling `toString` on `Object.prototype` and not the array itself meant that the
+*internally* defined method `[[Class]]` was called and the result was returned. This value could be used to determine
+what an object's type was even when the object was passed between different environments.
+
+The method `Object.prototype.toString.call(value)` uses to determine the object type can now be defined for custom
+objects using the `Symbol.toStringTag` symbol property.
+
+```js
+function Andy() {}
+
+let andy1 = new Andy();
+Object.prototype.toString.call(andy1); // [object Object]
+
+Andy.prototype[Symbol.toStringTag] = "Andy";
+
+Object.prototype.toString.call(andy1); // [object Andy]
+```
