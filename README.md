@@ -1547,10 +1547,10 @@ function isArray(value) {
 ```
 
 This was a work around. Calling `toString` on `Object.prototype` and not the array itself meant that the
-*internally* defined method `[[Class]]` was called and the result was returned. This value could be used to determine
+*internally* defined method `[[Class]]` was called. This value could be used to determine
 what an object's type was even when the object was passed between different environments.
 
-The method `Object.prototype.toString.call(value)` uses to determine the object type can now be defined for custom
+The method `Object.prototype.toString.call(value)` can now be used to defined for custom
 objects using the `Symbol.toStringTag` symbol property.
 
 ```js
@@ -1563,3 +1563,41 @@ Andy.prototype[Symbol.toStringTag] = "Andy";
 
 Object.prototype.toString.call(andy1); // [object Andy]
 ```
+
+You can set the string tag to whatever you like, which means you can't really trust it anymore is `Andy` _really_
+an `Array`?
+
+
+#### Symbol.unscopables
+
+```js
+let values = [1,2,3,4];
+let friends = ["toad", "crow"];
+
+with(friends) {
+  push(...values);
+}
+
+console.log(friends); // [ 'toad', 'crow', 1, 2, 3, 4, 1, 2, 3, 4 ]
+```
+
+ECMAScript 6 introduced a `values` method, and so you might expect `values` to refer to the Array's values method
+and not our local variable, which would cause errors. To prevent these errors, ECMAScript 6 introduced the
+`Symbol.unscopables` property.
+
+`Symbol.unscopables` indicates which properties should not create bindings inside the `with` statement.
+
+```js
+Array.prototype[Symbol.unscopables];
+// {
+//   copyWithin: true,
+//   entries: true,
+//   fill: true,
+//   find: true,
+//   findIndex: true,
+//   includes: true,
+//   keys: true,
+//   values: true
+// }
+```
+
