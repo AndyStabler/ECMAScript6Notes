@@ -1578,7 +1578,7 @@ with(friends) {
   push(...values);
 }
 
-console.log(friends); // [ 'toad', 'crow', 1, 2, 3, 4, 1, 2, 3, 4 ]
+console.log(friends); // [ 'toad', 'crow', 1, 2, 3, 4 ]
 ```
 
 ECMAScript 6 introduced a `values` method, and so you might expect `values` to refer to the Array's values method
