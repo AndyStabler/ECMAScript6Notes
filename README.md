@@ -1601,3 +1601,89 @@ Array.prototype[Symbol.unscopables];
 // }
 ```
 
+## Sets And Maps
+
+### Sets
+
+Sets don't coerce values, so `5` and `"5"` can both appear in a set
+
+Internally, Sets use `Object.is` to determine if two values are equal
+
+```js
+let mySet = new Set();
+
+let obj1 = {};
+let obj2 = {};
+
+mySet.add(obj1);
+mySet.add(obj2);
+
+mySet.size; // 2
+```
+
+In the past, when folk created their own sets using objects this wouldn't have worked in the way you migh expect.
+This is because object keys must be stored as strings, and objects converted to string are `[object Object]`.
+
+```js
+let mySet = Object.create(null);
+
+let obj1 = { a: 1};
+let obj2 = { b: 2};
+
+mySet[obj1] = "Andy";
+mySet[obj2] = "Cake";
+
+Object.keys(mySet)
+// [ '[object Object]' ]
+```
+
+Multiple calls to `.add` with a vaue that already exists in the set are ignored
+
+```js
+let mySet = new Set();
+
+mySet.add(5);
+mySet.add(5);
+mySet.add("5");
+
+mySet; // Set { 5, '5' }
+```
+
+You can pass in an array to the Set constructor if you want to remove duplicates:
+
+```js
+let mySet = new Set([1, 1, 2, 1, 5, 5, 2, 3]);
+mySet; // Set { 1, 2, 5, 3 }
+```
+
+The Set constructor accepts any iteratable object as an argument (arrays, sets, and maps are all iterable by default).
+
+```js
+let mySet = new Set([1, 2, 3]);
+mySet.has(1); // true
+
+mySet.delete(1); // true
+mySet; // Set { 2, 3 }
+mySet.has(1); // false
+
+mySet.clear();
+mySet; // Set {}
+```
+
+#### forEach
+
+```js
+let mySet = new Set([1, 2, 3, 5]);
+
+mySet.forEach(function(value, key, ownerSet){
+  console.log(`value: ${value}, key: ${key}, owner set: ${ownerSet}`);
+});
+
+// value: 1, key: 1, owner set: [object Set]
+// value: 2, key: 2, owner set: [object Set]
+// value: 3, key: 3, owner set: [object Set]
+// value: 5, key: 5, owner set: [object Set]
+```
+
+Note that `value` and `key` are both equal. This is to keep the function interface matching `forEach`s existing
+one used for Arrays and Maps. The two values `value` and `key` are equal here because a set's key _is_ its value.
