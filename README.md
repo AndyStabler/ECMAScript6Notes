@@ -1687,3 +1687,104 @@ mySet.forEach(function(value, key, ownerSet){
 
 Note that `value` and `key` are both equal. This is to keep the function interface matching `forEach`s existing
 one used for Arrays and Maps. The two values `value` and `key` are equal here because a set's key _is_ its value.
+
+You can pass `this` into `forEach` (just like you can with arrays)
+
+```js
+function Andy() {};
+
+Andy.prototype.communicate = function(person) {
+  console.log("BARK! at " + person);
+};
+
+Andy.prototype.socialise = function(people) {
+  people.forEach(function(person) {
+    this.communicate(person);
+  }, this);
+};
+
+
+
+let people = new Set(["Adam", "Sarah", "James", "Molly", "Adam"]);
+let andy = new Andy();
+andy.socialise(people);
+// BARK! at Adam
+// BARK! at Sarah
+// BARK! at James
+// BARK! at Molly
+
+
+// this also could be written using an arrow function, where `this` wouldn't need to be passed in
+Andy.prototype.socialise = function(people) {
+  people.forEach((person) => this.communicate(person));
+};
+
+andy.socialise(people);
+// BARK! at Adam
+// BARK! at Sarah
+// BARK! at James
+// BARK! at Molly
+```
+
+### Converting a Set to an Array
+
+```js
+let friends = ["toad", "crow", "hedgehog", "toad", "crow"];
+
+let uniqueFriends = [...new Set(friends)];
+uniqueFriends; // [ 'toad', 'crow', 'hedgehog' ]
+```
+
+### Weak Sets
+
+Weak Sets only store _weak object references_– they can only reference objects, not primitives.
+
+_Weak Object References_ do not prevent garbage collection if they are the only remaining reference.
+
+Strong sets do, however. The previous Set examples are all strong Sets
+
+```js
+let friends = new Set();
+let toad = { name: "toad" };
+
+friends.add(toad);
+
+friends.size; // 1
+
+toad = null;
+
+friends.size; // 1
+
+// gets original toad reference!
+[...friends][0]; // { name: 'toad' }
+```
+
+Here's the same example, but with a Weak Set:
+
+```js
+let friends = new WeakSet();
+
+let toad = { name: "toad" };
+
+friends.add(toad);
+
+friends.has(toad); // 1
+
+toad = null;
+
+friends.size; // undefined – you can't determine the size of a weakset(?)
+friends.has(toad); // true
+```
+
+Differences between Sets and WeakSets:
+
+1. `WeakSet#add`, `#has`, `#delete` all throw an error when passed a non-object (primitives)
+2. Weak Sets aren't iterable – forEach willnae work
+3. Weak Sets don't expose iterators like `keys()` and `values()` so it isn't possible to determine a set's contents
+4. Weak Sets don't have a `size` property
+
+Weak Set has limited functionality to properly deal with memory.
+
+Use a Weak Set if you just need to track object references.
+
+
