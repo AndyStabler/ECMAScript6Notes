@@ -1787,4 +1787,78 @@ Weak Set has limited functionality to properly deal with memory.
 
 Use a Weak Set if you just need to track object references.
 
+### Maps
+
+* Maps are ordered lists of key-value pairs
+* The key and value can be any type
+* Key equivalence uses `Object.is`, so keys of `5` and `"5"` can store different values
+  * Different from using objects as maps, since they use type coercion
+
+```js
+let textures = new Map();
+textures.set("toad", "slimey");
+textures.set("crow", "smooth");
+
+console.log(`toad is ${textures.get("toad")}`);
+console.log(`crow is ${textures.get("crow")}`);
+
+textures.get("non existing key"); // undefined
+```
+
+Objects can be used as keys– not possible when using objects as maps
+
+```js
+let subjects = new Map();
+
+let andy = { name: "Andy" };
+
+subjects.set(andy, ["Maths", "English", "Science"]);
+
+console.log(`Andy teaches ${subjects.get(andy).join(", ")}`);
+```
+
+```js
+let myMap = new Map();
+
+let key1 = {};
+let key2 = {};
+
+// keys are not coerced– the're considered unique
+myMap.set(key1, "value1");
+myMap.set(key2, "value2");
+
+console.log(`value1 is ${myMap.get(key1)}`); // value1
+console.log(`value2 is ${myMap.get(key2)}`); // value2
+```
+
+```js
+let textures = new Map();
+textures.set("toad", "slimey");
+textures.set("crow", "smooth");
+
+textures.has("toad"); // true
+
+textures.delete("toad");
+
+textures.has("toad"); // false
+
+textures.get("toad"); // undefined
+
+textures.clear();
+
+textures.size; // 0
+```
+
+
+#### Map initialisation
+
+```js
+let textures = new Map([["toad", "slimey"], ["crow", "smooth"], [42, "interesting"]]);
+textures.get("toad"); // slimey
+textures.get("crow"); // smooth
+textures.get(42); // interesting
+```
+
+An array is used to initialize a map with multiple key-values. An array is necessary here as the keys in the map can
+be any type and arrays don't do any type coercion on the keys, so the map is created correctly.
 
