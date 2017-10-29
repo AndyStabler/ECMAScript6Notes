@@ -1772,8 +1772,8 @@ friends.has(toad); // 1
 
 toad = null;
 
-friends.size; // undefined – you can't determine the size of a weakset(?)
-friends.has(toad); // true
+friends.size; // undefined – you can't determine the size of a weakset
+friends.has(toad); // false
 ```
 
 Differences between Sets and WeakSets:
