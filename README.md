@@ -1862,3 +1862,67 @@ textures.get(42); // interesting
 An array is used to initialize a map with multiple key-values. An array is necessary here as the keys in the map can
 be any type and arrays don't do any type coercion on the keys, so the map is created correctly.
 
+#### for each
+
+The callback passed is called for each element in the map _int the order the elements were added to the map_, which
+is slightly different behaviour to arrays (where they're iterated based on the numerical order of the index)
+
+```js
+let textures = new Map([["toad", "slimey"], ["crow", "smooth"], [42, "interesting"]]);
+textures.forEach(function(value, key, ownerMap) {
+  console.log(`${key}:${value}`);
+  console.log(textures === ownerMap);
+});
+// toad:slimey
+// true
+// crow:smooth
+// true
+// 42:interesting
+// true
+```
+
+### Weak Maps
+
+Good for associating data with DOM elements – garbage collection cleans up the map
+when DOM elements are no longer referenced
+
+* They're a way to store weak object references.
+* Every key must be an object
+* The object references are held weakly (they don't interfere with garbage collection)
+* When there are no references to a weak map key, the key-value pair is removed from the map
+* Weak maps don't store weak references to the map's values
+  * A weak map value that is unreferenced outside the map will prevent garbage collection
+* Unordered list of key-value pairs
+* Keys are non-null objects
+* Values can be any type
+
+has `set` and `get` methods
+
+```js
+let DOMObjects = new WeakMap();
+let element = document.getElementById("header");
+DOMObjects.set(element, "the header");
+DOMObjects.get(element); // the header
+
+// removing the element from the dom and setting the variable reference to null removes the key-value from the map
+document.parentNode.removeChild(element);
+element = nulll;
+
+// weak map is empty – there is no size property on the weak map, so no way to verify :)
+// there are no references to the element object, so when the garbage collector runs the memory taken by it will
+// be freed
+```
+
+has `has` and `delete` methods
+  * no `clear` method as that would involve enumerating the keys
+
+```js
+let toad = {name: "toad"};
+let textures = new WeakMap([[toad, "slimy"]]);
+
+textures.has(toad); // true
+textures.delete(toad); // true
+
+textures.has(toad); // false
+```
+
