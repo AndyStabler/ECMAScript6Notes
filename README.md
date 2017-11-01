@@ -1926,3 +1926,35 @@ textures.delete(toad); // true
 textures.has(toad); // false
 ```
 
+## Iterators and Generators
+
+Iterators increase readability and redue risk of errors by reducing the duplication of boilerplate code.
+
+Iterators have a `next` method that returns an object. That object has a `value` and a `done` property. `done` is
+true when there are no more objects left to iterate over.
+
+```js
+function createIterator(items) {
+  let i = 0;
+
+  return {
+    next: function() {
+      let done = i >= items.length;
+      let value = done ? undefined : items[i++];
+      return {
+        done: done,
+        value: value
+      };
+    }
+  };
+};
+
+let numberIterator = createIterator([1,2,3,4,5]);
+numberIterator.next(); // { done: false, value: 1 }
+numberIterator.next(); // { done: false, value: 2 }
+numberIterator.next(); // { done: false, value: 3 }
+numberIterator.next(); // { done: false, value: 4 }
+numberIterator.next(); // { done: false, value: 5 }
+numberIterator.next(); // { done: true, value: undefined }
+numberIterator.next(); // { done: true, value: undefined }
+```
