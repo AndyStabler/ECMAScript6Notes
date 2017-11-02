@@ -1928,6 +1928,8 @@ textures.has(toad); // false
 
 ## Iterators and Generators
 
+### Iterators
+
 Iterators increase readability and redue risk of errors by reducing the duplication of boilerplate code.
 
 Iterators have a `next` method that returns an object. That object has a `value` and a `done` property. `done` is
@@ -1958,3 +1960,84 @@ numberIterator.next(); // { done: false, value: 5 }
 numberIterator.next(); // { done: true, value: undefined }
 numberIterator.next(); // { done: true, value: undefined }
 ```
+
+### Generators
+
+Generators are functions that return an iterator
+
+```js
+function *createIterator() {
+  yield 1;
+  yield 2;
+  yield 3;
+};
+
+let numberIterator = createIterator();
+numberIterator.next(); // { value: 1, done: false }
+numberIterator.next(); // { value: 2, done: false }
+numberIterator.next(); // { value: 3, done: false }
+numberIterator.next(); // { value: undefined, done: true }
+
+function *createIterator(items) {
+  for(let i = 0; i < items.length; i++) {
+    yield items[i];
+  }
+};
+
+let numberIterator2= createIterator([1,2,3]);
+numberIterator2.next(); // { value: 1, done: false }
+numberIterator2.next(); // { value: 2, done: false }
+numberIterator2.next(); // { value: 3, done: false }
+numberIterator2.next(); // { value: undefined, done: true }
+```
+
+Note: yield is only valid in the generator function– anywhere else and it's a syntax error. It's invalid
+even in a nested function in the generator. yield can't cross function boundaries.
+
+```js
+function *createIterator(items) {
+  items.forEach(function(item) {
+    yield item; // SYNTAX ERROR
+  });
+};
+
+let numberIterator3 = createIterator([1,2,3]);
+numberIterator3.next();
+numberIterator3.next();
+numberIterator3.next();
+numberIterator3.next();
+```
+
+The other syntax is
+
+```js
+let createIterator = function *(items) {
+  // ...
+}
+```
+
+This is a generator function expression instead of a function declaration. The function expression is anonymous.
+
+### Iterables
+
+An iterable is an object with a `Symbol.iterator` property set.
+
+`Symbol.iterator` is a well-known symbol.
+
+All collection objects (strings, arrays, sets, etc) are iterables in ECMAScript 6.
+
+### Accessing the default iterator
+
+You can access the default iterator for an object through `Symbol.iterator`:
+
+```js
+let name = "Andy";
+
+let iterator = name[Symbol.iterator]();
+iterator.next(); // { value: 'A', done: false }
+iterator.next(); // { value: 'n', done: false }
+iterator.next(); // { value: 'd', done: false }
+iterator.next(); // { value: 'y', done: false }
+iterator.next(); // { value: undefined, done: true }
+```
+
