@@ -36,7 +36,7 @@ Declare bindings not accessible out of a block
 
 let == var, but limits scope to only current block - prevents variable hoisting occuring from
 
-```
+```js
 var x = function(condition) {
   // actually results in var x; here
   if (condition) {
@@ -48,7 +48,7 @@ var x = function(condition) {
 
 Can't redeclare in same block using `let`
 
-```
+```js
 var x = 5;
 var x = 5; // OK
 
@@ -58,39 +58,39 @@ let x = 10; // Duplicate delcaration
 
 Declaring variable in new block is fine
 
-```
+```js
 var x = 5;
 if (true)
   let x = 10; // OK
 ```
 ## Constants
 
-```
+```js
 const value = 5; // can't be reset
 ```
 
 must be initialized on declaration, since they can't be reset
 
-```
+```js
 const value; // syntax error
 ```
 
 constants are *not* hoisted and are only available in the block they are declared in.
 
-```
+```js
 if (thing) { const x = 5;} // x not available outside of if block
 ```
 
 can't redeclare a variable as a constant
 
-```
+```js
 var x = 5;
 const x = 10; // error: x is read-only
 ```
 
 constants cannot be changed, but the underlying object can
 
-```
+```js
 const obj = { a: 1 }
 obj.a = 2 // OK
 ```
@@ -99,7 +99,7 @@ obj.a = 2 // OK
 
 variables defined using let can only be accessed after they're declared.
 
-```
+```js
 for ( .. ) {
   // TDZ
   console.log(typeof x); // throws an error
@@ -107,7 +107,7 @@ for ( .. ) {
 }
 ```
 
-```
+```js
 console.log(typeof x); // undefined - Not in TDZ (not in the same block, and above the declaration) - doesn't throw error
 for ( .. ) {
   let x = 1;
@@ -116,14 +116,14 @@ for ( .. ) {
 
 Use block level bindings for for loops
 
-```
+```js
 for (let x = 0; x < 10; x++) { ... }
 
 console.log(x); // x is not defined
 ```
 using var, the variable is hoisted so is available outside of the for block
 
-```
+```js
 for (var i = 0; i < 10; i++) { .. }
 
 console.log(i); // prints 9
@@ -133,7 +133,7 @@ console.log(i); // prints 9
 
 functions in loops have access to the same reference of the variables in the loop
 
-```
+```js
 var funcs = [];
 
 for(var i = 0; i < 10; i++) {
@@ -159,7 +159,7 @@ This ^ looks complicated and block level scoping fixes this. It creates a fresh 
 
 Using let pulls the loop function into a function called `_loop` and invokes it immediately, just like the IIFE, but this is hidden.
 
-```
+```js
 var funcs3 = [];
 
 for (let x = 0; x < 10; x++) {
@@ -171,13 +171,13 @@ funcs3.forEach(function(func){ func(); }); // prints 0..9
 
 ## Global Block Bindings
 
-```
+```js
 var x = "hello";
 ```
 
 in a global scope, sets `window.x` to "hello". This would overwrite any value that existed on the window already for `x`.
 
-```
+```js
 let x = "hello";
 ```
 
@@ -203,7 +203,7 @@ THIS IS WEIRD AND NOT HANDLED WELL IN ECMAScript 5
 
 for example:
 
-```
+```js
 const myText = "𠜎"; // < this is just one chinese character
 
 console.log(myText.length); // 2
@@ -215,7 +215,7 @@ console.log(myText.charCodeAt(1)); //  57102
 
 in ECMAScript 6 you can use
 
-```
+```js
 codePointAt(0) > 0xFFFF
 ```
 
@@ -223,14 +223,14 @@ to determine if the character is a surrogate pair.
 
 codePointAt returns the full code point even though the code point spans multiple code units
 
-```
+```js
 console.log(myText.codePointAt(0)); // 132878
 
 console.log(myText.codePointAt(0) > 0xFFFF); // true
 console.log("andy".codePointAt(0) > 0xFFFF); // false
 ```
 
-```
+```js
 String.fromCodePoint(codePoint); // gives you the full character represented by the code point
 
 console.log(String.fromCodePoint(132878)); // 𠜎
@@ -246,7 +246,7 @@ two compatible sequences of codes look different, but can be used interchangeabl
 
 Normalise strings before sorting/comparing them
 
-```
+```js
 "string".normalize(); // NFC, NFD, NFKC, NFKD are available forms of normalisation
 ```
 
@@ -258,7 +258,7 @@ u flag fixes this in ECMAScript 6
 
 u flag stops regex treating surrogate pairs like separate characters
 
-```
+```js
 /^.$/.test("𠜎") // false
 /^.$/u.test("𠜎") // true
 ```
@@ -267,7 +267,7 @@ compares characters instead of codes
 
 ### Methods for identifying substrings
 
-```
+```js
 includes(string, optional_index)
 startsWith(string, optional_index)
 endsWith(string, optional_index)
@@ -278,7 +278,7 @@ repeat(times) // "x".repeat(4) -> "xxxx"
 
 Used to create multiline strings
 
-```
+```js
 const text = `hello
 world`;
 console.log(text);
@@ -286,14 +286,14 @@ console.log(text);
 
 String substitutions
 
-```
+```js
 const quantity = 3, price = 2.3;
 console.log(`That will be ${(price * quantity).toFixed(2)}. Thanks!`);
 ```
 
 ## Tagged Template Literals
 
-```
+```js
 function myTag(literals, ...substitutions) {
   var moods = {5: "happy"};
   var str = "";
@@ -313,7 +313,7 @@ console.log(thing);
 
 ### Raw values in Template Literals
 
-```
+```js
 console.log(`hello\nWorld`);
 // "hello
 // world"
@@ -323,7 +323,7 @@ console.log(String.raw`hello\nworld`);
 
 literals array has a `raw` property, so can mimic this `String.raw` inside template:
 
-```
+```js
 function myTag(literals, ...substitutions) {
   var str = "";
   for(let i = 0; i < substitutions.length; i++) {
@@ -340,7 +340,7 @@ function myTag(literals, ...substitutions) {
 
 Default parameters are supported in ES6, they weren't in ES5.
 
-```
+```js
 // ES5
 function myFunc(id, age, name) {
   age = (typeof age === "unefined") ? 21 : age;
@@ -358,7 +358,7 @@ BUT passing in `null` would not cause it to be used.
 
 named parameters are detatched from the `arguments` object – just like in ES5 strict mode
 
-```
+```js
 function myFunc(id, age = 21, name = "Andy") {
   console.log(arguments["age"]);
   age = 10;
@@ -374,7 +374,7 @@ arguments.length is 1 there because the assignment in the constructor doesn't mo
 
 Fine to reference parameters in the method definition after they have been initialized in the constructor
 
-```
+```js
 function getTwo(value) {
   return value + 1;
 }
@@ -389,7 +389,7 @@ sum(1,1); // 2
 
 the reverse isn't true though
 
-```
+```js
 function getTwo(value) {
   return value + 1;
 };
@@ -404,7 +404,7 @@ sum(undefined, 1) // NaN
 
 second example translates to
 
-```
+```js
 let one = two
 let two = 1
 ```
@@ -415,7 +415,7 @@ default parameter value cannot access variables defined in the function body
 
 ## Rest Parameters
 
-```
+```js
 function pick(object, ...keys) {
   var result = Object.create(null);
 
@@ -431,7 +431,7 @@ function pick(object, ...keys) {
 2. rest parameter has to be the last argument in the list
 3. rest parameter cannot live in in object literal setter
 
-```
+```js
 let myObj = {
   // syntax error - can only pass one value into object literal setters - rest are infinite
   set name(...value) {
@@ -446,7 +446,7 @@ Rest arguments designed to replace `arguments` object
 
 Metaprogramming in JavaScript
 
-```
+```js
 var sum = new Function("first", "second = first", "return first + second");
 var pickFirst = new Function("...args", "return args[0]");
 
@@ -460,7 +460,7 @@ Same capabilities as the declarative method to create functions
 
 reduce an array into individual arguments for a function
 
-```
+```js
 let myNumbers = [1,2,3,5];
 let max = Math.max(...myNumbers);
 
@@ -468,7 +468,7 @@ console.log(max); // 5
 ```
 can put the spread operator at any position
 
-```
+```js
 let max = Math.max(...myNumbers, 0); // incase there are negative numbers
 ```
 
@@ -476,7 +476,7 @@ let max = Math.max(...myNumbers, 0); // incase there are negative numbers
 
 All functions have a name property, which makes debugging easier than in ECMAScript 5
 
-```
+```js
 var myFunction = function myFunc() {
   // ...
 };
