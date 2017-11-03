@@ -8,7 +8,7 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
 * [Block bindings](#block-bindings)
   * [Let](#let)
 * [Constants](#constants)
-  * [Temporal dead zone (TDZ)](#temporal-dead-zone-tdz)
+* [Temporal dead zone (TDZ)](#temporal-dead-zone-tdz)
 * [Functions in loops](#functions-in-loops)
 * [Global block bindings](#global-block-bindings)
 * [Strings](#strings)
@@ -189,7 +189,7 @@ const obj = { a: 1 }
 obj.a = 2 // OK
 ```
 
-### Temporal Dead Zone (TDZ)
+## Temporal Dead Zone (TDZ)
 
 variables defined using let can only be accessed after they're declared.
 
