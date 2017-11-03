@@ -2041,3 +2041,108 @@ iterator.next(); // { value: 'y', done: false }
 iterator.next(); // { value: undefined, done: true }
 ```
 
+### Creating Iterables
+
+Define the `Symbol.iterator` property on an object. Objects are not iterable by default.
+
+```js
+let collection = {
+  items: [],
+  [Symbol.iterator]: function *() {
+    // relying on the items iterator to do the work
+    for(let item of this.items) {
+      yield item;
+    }
+  }
+};
+
+collection.items.push(5);
+collection.items.push(3);
+collection.items.push(1);
+
+for(let item of collection) {
+  console.log(item);
+}
+// 5
+// 3
+// 1
+```
+
+## Built-in Iterators
+
+ECMAScript 6 has a bunch of built in-operators to use.
+
+### Collection iterators
+
+ECMAScript 6 has the following built-in iterators for collection objects (arrays, maps, and sets):
+
+1. `entries`- an iterator containing the key-value pairs of the collection
+2. `keys` - an iterator containing the keys of the collection
+3. `values` - an iterator containing the values of the collection
+
+The default iterator for arrays and sets is `values`
+The default iterator for maps is `entries`
+
+
+Notes: you can use `destructuring` in `for-of` loops:
+
+```js
+let textures = new Map([["toad", "slimy"], ["crow", "smooth"]]);
+
+for(let [animal, texture] of textures) {
+  console.log(`${animal} is ${texture}`);
+}
+// toad is slimy
+// crow is smooth
+```
+
+### String Iterators
+
+Strings are similar to arrays in that you can use bracket notation to access characters
+
+```js
+let name = "Andy";
+let first = name[0]; // A
+```
+
+However, bracket notation uses code units, and so won't work for double-byte characters:
+
+```js
+let name = "👩";
+name.length; // 2
+
+for(let i = 0; i < name.length; i++) {
+  console.log(name[i]);
+}
+// �
+// �
+```
+
+ECMAScript 6 attempts to solve this issue with the default iterator for Strings that fully supports Unicode.
+
+```js
+let name = "👩";
+name.length; // 2
+
+for(let char of name) {
+  console.log(char);
+}
+// 👩
+```
+
+### Spread Operator and Nonarray Iterables
+
+Using the spread operator interanlly uses the default iterator for the collection you are accessing.
+
+It works on any iterable.
+
+```js
+let set = new Set([1, 2, 3, 4, 5, 5, 5, 6, 7, 7]);
+let array = [...set]; // 1, 2, 3, 4, 5, 6, 7
+```
+
+The values are read and inserted into the array in the order in which the values are returned from the iterator
+
+Because the spread operator can be used on any iterable it's a dandy way of convert an iterable to an array
+  * Strings to arrays of code points
+  * NodeList objects into an array of nodes
