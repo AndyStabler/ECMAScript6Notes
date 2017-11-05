@@ -95,7 +95,7 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
 * [Built-in iterators](#built-in-iterators)
   * [Collection iterators](#collection-iterators)
   * [String iterators](#string-iterators)
-  * [Spread operator and nonarray iterables](#spread-operator-and-nonarray-iterables)
+* [Spread operator and nonarray iterables](#spread-operator-and-nonarray-iterables)
 
 ## Naming - The most confusing part
 
@@ -2224,7 +2224,7 @@ for(let char of name) {
 // 👩
 ```
 
-### Spread Operator and Nonarray Iterables
+## Spread Operator and Nonarray Iterables
 
 Using the spread operator interanlly uses the default iterator for the collection you are accessing.
 
@@ -2241,9 +2241,9 @@ Because the spread operator can be used on any iterable it's a dandy way of conv
   * Strings to arrays of code points
   * NodeList objects into an array of nodes
 
-### Advanced Iterator Functionality
+## Advanced Iterator Functionality
 
-#### Passing arguments to Iterators
+### Passing arguments to Iterators
 
 Arguments can be passed in to the `next` method to alter the internal state of the generator.
 
@@ -2265,7 +2265,7 @@ iterator.next(5); // { value: 7, done: false }
 iterator.next(2); // { value: 5, done: false }
 ```
 
-#### Throwing errors in Iterators
+### Throwing errors in Iterators
 
 ```js
 function *createiterator() {
