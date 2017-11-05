@@ -2240,3 +2240,27 @@ The values are read and inserted into the array in the order in which the values
 Because the spread operator can be used on any iterable it's a dandy way of convert an iterable to an array
   * Strings to arrays of code points
   * NodeList objects into an array of nodes
+
+### Advanced Iterator Functionality
+
+#### Passing arguments to iterators
+
+Arguments can be passed in to the `next` method to alter the internal state of the generator.
+
+The first time `yield` is called, the argument passed in will not be used. This is because the value passed into
+`next` will be used as the result of the last `yield` expression. There is no `yield` before the first one, so the
+first `yield` will not use the argument.
+
+```js
+function *createIterator() {
+  let first = yield 1;
+  let second = yield first + 2;
+  yield second + 3;
+};
+
+let iterator = createIterator();
+
+iterator.next(); // { value: 1, done: false }
+iterator.next(5); // { value: 7, done: false }
+iterator.next(2); // { value: 5, done: false }
+```
