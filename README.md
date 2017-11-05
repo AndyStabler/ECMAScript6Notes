@@ -2243,7 +2243,7 @@ Because the spread operator can be used on any iterable it's a dandy way of conv
 
 ### Advanced Iterator Functionality
 
-#### Passing arguments to iterators
+#### Passing arguments to Iterators
 
 Arguments can be passed in to the `next` method to alter the internal state of the generator.
 
@@ -2264,3 +2264,43 @@ iterator.next(); // { value: 1, done: false }
 iterator.next(5); // { value: 7, done: false }
 iterator.next(2); // { value: 5, done: false }
 ```
+
+#### Throwing errors in Iterators
+
+```js
+function *createiterator() {
+  let first = yield 1; // 1
+  let second = yield first + 2; // 7. error is raised before second is assigned
+  yield second + 3; // never reached
+};
+
+let iterator = createiterator();
+
+iterator.next(); // { value: 1, done: false }
+iterator.next(5); // { value: 7, done: false }
+iterator.throw(new Error("boom")); // Error: boom
+```
+
+Knowing when the error is raised allows us to catch it.
+
+```js
+function *createiterator() {
+  let first = yield 1;
+  let second;
+  try {
+    second = yield first + 2; // second not assigned since error is raised
+  } catch(ex) {
+    second = 6;
+  }
+  yield second + 3;
+};
+
+let iterator = createiterator();
+
+iterator.next(); // 1
+iterator.next(5); // 7
+iterator.throw(new Error("boom")); // 9
+```
+
+Note that `throw` still yields the result in this case
+
