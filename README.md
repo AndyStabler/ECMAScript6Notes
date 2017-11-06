@@ -99,6 +99,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
 * [Advanced Iterator Functionality](#advanced-iterator-functionality)
   * [Passing arguments to Iterators](#passing-arguments-to-iterators)
   * [Throwing errors in Iterators](#throwing-errors-in-iterators)
+  * [Return statement in Generators](#return-statement-in-generators)
+  * [Delegating Generators](#delegating-generators)
 
 ## Naming - The most confusing part
 
