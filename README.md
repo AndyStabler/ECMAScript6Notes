@@ -2304,3 +2304,68 @@ iterator.throw(new Error("boom")); // 9
 
 Note that `throw` still yields the result in this case
 
+### Return statement in Generators
+
+You can return early using `return` statement.
+
+All `yields` after `return` are ignored, and once the `return` is hit, the `done` boolean is set to true on the
+iterator.
+
+```js
+function *createIterator() {
+  yield 1;
+  return 3;
+  yield 2; // never reached
+};
+
+let iterator = createIterator();
+iterator.next(); // { value: 1, done: false }
+iterator.next(); // { value: 3, done: true}
+iterator.next(); // { value: undefined, done: true}
+```
+
+
+### Delegating Generators
+
+Generators can delegate to other generators and the `yields` will be executed sequentially:
+
+```js
+function *createFriendIterator() {
+  yield "Max";
+  yield "Barney";
+};
+
+function *createFoodIterator() {
+  yield "Soup";
+  yield "Pudding";
+};
+
+function *createGoodThingsIterator() {
+  yield *createFriendIterator();
+  yield *createFoodIterator();
+};
+
+let iterator = createGoodThingsIterator();
+iterator.next(); // { value: "Max", done: false }
+iterator.next(); // { value: "Barney", done: false }
+iterator.next(); // { value: "Soup", done: false }
+iterator.next(); // { value: "Pudding", done: false }
+iterator.next(); // { value: undefined, done: true }
+```
+
+You can use `yield *` to delegate to string iterators:
+
+```js
+function *createNameIterator() {
+  yield * "Andy";
+  yield * "Stabler";
+};
+
+let iterator = createNameIterator();
+iterator.next(); // { value: "A", done: false }
+iterator.next(); // { value: "n", done: false }
+...
+
+iterator.next(); // { value: "r", done: false }
+iterator.next(); // { value: undefined, done: true }
+```
