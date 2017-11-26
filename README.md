@@ -2385,7 +2385,7 @@ Old way:
 // constructor function that creates a `name` property type
 var Person = function(name) {
   this.name = name;
-}
+};
 
 // sayName is assigned to the prototype – same functions shared by all instances of Person
 Person.prototype.sayName = function() {
