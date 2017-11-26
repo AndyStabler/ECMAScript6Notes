@@ -101,6 +101,7 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Throwing errors in Iterators](#throwing-errors-in-iterators)
   * [Return statement in Generators](#return-statement-in-generators)
   * [Delegating Generators](#delegating-generators)
+* [Classes](#classes)
 
 ## Naming - The most confusing part
 
@@ -2374,3 +2375,53 @@ iterator.next(); // { value: "n", done: false }
 iterator.next(); // { value: "r", done: false }
 iterator.next(); // { value: undefined, done: true }
 ```
+
+## Classes
+
+Old way:
+
+```js
+// approach called creating a custom type
+// constructor function that creates a `name` property type
+var Person = function(name) {
+  this.name = name;
+}
+
+// sayName is assigned to the prototype – same functions shared by all instances of Person
+Person.prototype.sayName = function() {
+  console.log(this.name);
+};
+
+// new instance created – new object is an instance of Person and Object through prototypal inheritance
+new Person("Andy");
+```
+
+New way:
+
+```js
+class Person {
+  // same as Person constructor above
+  constructor(name) {
+    this.name = name;
+  }
+
+  // same as sayName above
+  sayName() {
+    console.log(this.name);
+  }
+}
+```
+
+* Class methods use concise method syntax, so there's no need for the `function` keyword
+* Class declarations are just syntactic sugar on top of the existing custom type declarations
+  * Person class creates a function, whose body is the `constructor`'s
+  * The `sayName` method ends up on the Person.prototype
+  * This means custom type approach and Class declarations can be mixed without too much hassle
+* Class declarations are not hoisted. They're like `let` declarations and exist in the TDZ until execution reaches
+  the declaration
+* Code in classes is run in strict-mode – no way to opt-out
+* All methods in classes are non-enumerable (won't show up in `for...in` loops
+* No class methods have an internal `[[Construct]]` method, so will raise an error if called with `new`
+* Calling class constructor without `new` raises an error
+* You can't overwrite the class name within a class method
+
