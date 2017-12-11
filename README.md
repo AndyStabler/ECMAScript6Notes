@@ -2425,3 +2425,83 @@ class Person {
 * Calling class constructor without `new` raises an error
 * You can't overwrite the class name within a class method
 
+### Anonymous class expressions
+
+These are functionally equivalent to class declarations
+
+```js
+let Person = class {
+
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayName() {
+    console.log(this.name);
+  }
+}
+
+let person = new Person("andy");
+person.sayName(); // andy
+```
+
+### Named class expressions
+
+Like function expressions, you can name class expressions
+
+```js
+// Person2 is only known about inside the class– referencing Person2 outside the scope of the class
+// will result in an error
+let Person = class Person2 {
+  ...
+}
+
+let person = new Person2(); // Bang
+```
+
+### Classes as first-class citizens
+
+* can be passed into function
+* returned from a function
+* assigned to a variable
+
+Like functions– they're first-class citizens
+
+```js
+function toObj(classDef) {
+  return new classDef();
+};
+
+let classDef = class {
+  constructor(name) {
+    this.name;
+  }
+
+  sayName() {
+    console.log(`Hey, ${this.name}`);
+  }
+}
+
+let obj = toObj(classDef);
+```
+
+### Accessor Properties
+
+getters and setters are now part of the language
+
+```js
+class Friend {
+
+  constructor(name) {
+    this._name = name;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(name) {
+    this._name = name;
+  }
+}
+```
