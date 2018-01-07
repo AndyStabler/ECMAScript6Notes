@@ -106,6 +106,10 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Named Class Expressions](#named-class-expressions)
   * [Classes as first-class citizens](#classes-as-first-class-citizens)
   * [Accessor properties](#accessor-properties)
+  * [Computed method names](#computed-method-names)
+  * [Generator Methods](#generator-methods)
+  * [Static Members](#static-members)
+  * [Inheritance with Derived Classes](#inheritance-with-derived-classes)
 
 ## Naming - The most confusing part
 
