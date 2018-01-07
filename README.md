@@ -102,6 +102,10 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Return statement in Generators](#return-statement-in-generators)
   * [Delegating Generators](#delegating-generators)
 * [Classes](#classes)
+  * [Anonymous Class Expressions](#anonymous-class-expressions)
+  * [Named Class Expressions](#named-class-expressions)
+  * [Classes as first-class citizens](#classes-as-first-class-citizens)
+  * [Accessor properties](#accessor-properties)
 
 ## Naming - The most confusing part
 
