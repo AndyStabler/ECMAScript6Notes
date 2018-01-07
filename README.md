@@ -2505,3 +2505,117 @@ class Friend {
   }
 }
 ```
+
+
+### Computed method names
+
+Just like object literals, classes can have computed method names
+
+```js
+let methodName = "getName";
+
+class Person {
+
+  constructor(name) {
+    this.name = name;
+  }
+
+  [methodName]() {
+    return this.name;
+  }
+}
+
+new Person("Andy").getName(); // Andy
+```
+
+### Generator Methods
+
+Prepending an asterisk before a method name creates a generator (just like with object literals).
+
+Any method can become a generator.
+
+Useful when you have an object that represents a collection of values that you want to iterate over easily. For
+example, Arrays, Sets, Maps all have several generator methods to cater to the different ways developers interact
+with the collection's elements.
+
+```js
+class Person {
+  *createIterator() {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+}
+
+let iterator = new Person().createIterator();
+iterator.next(); // { value: 1, done: false }
+iterator.next(); // { value: 2, done: false }
+iterator.next(); // { value: 3, done: false }
+iterator.next(); // { value: undefined, done: true }
+```
+
+### Static Members
+
+Static members are **not** available from within an instance-- they must be accessed on the class directly.
+
+ECMAScript 5
+
+```js
+var Person = function(name) {
+  this.name = name;
+};
+
+Person.create = function(name) {
+  return new Person(name);
+};
+
+var p = Person.create("Andy"); // Person { name: 'Andy' }
+```
+
+ECMAScript 6
+
+```js
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayName() {
+    console.log(this.name);
+  }
+
+  static create(name) {
+    return new Person(name);
+  }
+}
+
+let person = Person.create("Andy"); // Person { name: 'Andy' }
+```
+
+### Inheritance with Derived Classes
+
+* Use `extends` keyword to make a class inherit from another
+* Use `super` in a method to call the super class's method
+* Constructors must call `super` in derived classes.
+  * If there is no constructor in the derived class then super will be called automatically with all arguments
+  passed to the derived class's constructor.
+* `super` must be called before `this` in a constructor
+
+```js
+class Rectangle {
+  constructor(length, width) {
+    this.length = length;
+    this.width = width;
+  }
+
+  getArea() {
+    return this.length * this.width;
+  }
+}
+
+class Square extends Square {
+  constructor(length) {
+    super(length, length);
+  }
+}
+```
