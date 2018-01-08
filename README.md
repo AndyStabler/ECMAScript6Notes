@@ -2672,7 +2672,7 @@ console.log(square instanceof Square); // false
 console.log(square instanceof Rectangle); // true
 ```
 
-### Derived Classes from Expressions
+### Derived Classes from Expressions
 
 `extends` accepts an expression on its right hand side. So the value passed can be dynamic
 `extends` accepts any expression that evalutes to a function with a `[[Construct]]` and a prototype.
