@@ -2623,3 +2623,136 @@ class Square extends Square {
   }
 }
 ```
+
+### Shadowing (Overriding) Methods
+
+```js
+class Square extends Rectangle {
+  constructor(length) {
+    super(length, length);
+  }
+
+  // overriding/shadowing the getArea method from the Rectangle class
+  getArea() {
+    return this.length * this.length;
+  }
+}
+```
+
+### Inherited Static Members
+
+Static members are inherited by the derived class.
+
+
+```js
+class Rectangle {
+  ...
+
+  static create(length, length) {
+    return new Rectangle(length, length);
+  }
+  ...
+}
+
+class Square extends Rectangle {
+  constsructor(length) {
+    super(length, length);
+  }
+  ...
+}
+
+let square = Square.create(3, 4);
+console.log(square instanceof Square); // false
+console.log(square instanceof Rectangle); // true
+```
+
+### Derived Classes from Expressions
+
+`extends` accepts an expression on its right hand side. So the value passed can be dynamic
+`extends` accepts any expression that evalutes to a function with a `[[Construct]]` and a prototype.
+
+```js
+function Rectangle(length, width) {
+  this.length = length;
+  this.width = width;
+}
+
+Rectangle.prototype.getArea = function() {
+  return this.length * this.width;
+};
+
+function getBaseClassName() {
+  return Rectangle;
+}
+
+class Square extends getBaseClassName() {
+  constructor(length) {
+    super(length, length);
+  }
+}
+
+let square = new Square(5);
+square.getArea(); // 25
+```
+
+Mixins allow for a mixin approach:
+
+
+```js
+let SerializableMixin = {
+  serialize() {
+    return JSON.stringify(this);
+  }
+};
+
+let AreaMixin = {
+  getArea() {
+    this.length * this.width;
+  }
+};
+
+function mixin(...mixins) {
+  let base = function() {};
+  Object.assign(base.prototype, ...mixins);
+  return base;
+}
+
+class Square extends mixin(SerializableMixin, AreaMixin) {
+  constructor(length) {
+    super();
+    this.length = length;
+    this.width = length;
+  }
+}
+
+let x = new Square(3);
+x.getArea(); // 9
+x.serialize(); // '{"length":3,"width":3}'
+```
+
+### Inheriting from Built-Ins
+
+In ECMAScript 5 `this` was set in the derived class first, then the base class constructor was called.
+`this` started out as an instance of the derived class and was then decorated with properties from the base class.
+
+In ECMAScript 6 the value of `this` is first created by the base class and then modified by the derived class
+constructor. `this` has all the functionality of the base class.
+
+```js
+class MyArray extends Array {
+  sayElements() {
+    for(let i = 0; i < this.length; i++) {
+      console.log(this[i]);
+    }
+  }
+}
+
+let colours = new MyArray();
+colours[0] = "Cyan";
+colours.length; // 1
+colours.sayElements();
+// Cyan
+// undefined
+colours.length = 0;
+colours.sayElements(); // undefined
+```
