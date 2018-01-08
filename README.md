@@ -112,6 +112,9 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Inheritance with Derived Classes](#inheritance-with-derived-classes)
   * [Shadowing (Overriding) Methods](#shadowing-overriding-methods)
   * [Inherited Static Members](#inherited-static-members)
+  * [Derived Classes from Expressions](#derived-classes-from-expressions)
+  * [Inheriting from Built-Ins](#inheriting-from-built-ins)
+
 
 ## Naming - The most confusing part
 
