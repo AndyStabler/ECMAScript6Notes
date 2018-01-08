@@ -110,6 +110,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Generator Methods](#generator-methods)
   * [Static Members](#static-members)
   * [Inheritance with Derived Classes](#inheritance-with-derived-classes)
+  * [Shadowing (Overriding) Methods](#shadowing-overriding-methods)
+  * [Inherited Static Members](#inherited-static-members)
 
 ## Naming - The most confusing part
 
