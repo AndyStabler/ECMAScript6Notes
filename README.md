@@ -110,6 +110,11 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Generator Methods](#generator-methods)
   * [Static Members](#static-members)
   * [Inheritance with Derived Classes](#inheritance-with-derived-classes)
+  * [Shadowing (Overriding) Methods](#shadowing-overriding-methods)
+  * [Inherited Static Members](#inherited-static-members)
+  * [Derived Classes from Expressions](#derived-classes-from-expressions)
+  * [Inheriting from Built-Ins](#inheriting-from-built-ins)
+
 
 ## Naming - The most confusing part
 
@@ -2670,7 +2675,7 @@ console.log(square instanceof Square); // false
 console.log(square instanceof Rectangle); // true
 ```
 
-### Derived Classes from Expressions
+### Derived Classes from Expressions
 
 `extends` accepts an expression on its right hand side. So the value passed can be dynamic
 `extends` accepts any expression that evalutes to a function with a `[[Construct]]` and a prototype.
