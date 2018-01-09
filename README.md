@@ -2760,3 +2760,85 @@ colours.sayElements();
 colours.length = 0;
 colours.sayElements(); // undefined
 ```
+
+### The Symbol.species property
+
+Symbol.species is a way to identify the current class.
+
+Symbol.species always returns the current constructor function.
+
+If you extend a class and call a method inherited from the base class that creates a new object, the new
+object will have the same type as the derived class.
+
+Use the `Symbol.species` property when you need to use `this.constructor` in a class method. Derived classes can
+then override the return type easily.
+
+```js
+class MyArray extends Array {}
+
+let array1 = new MyArray(1, 2, 3, 4);
+array1 instanceof Array; // true
+array1 instanceof MyArray; // true
+
+array1.slice(1, 3) instanceof MyArray; // true
+array1.slice(1, 3) instanceof Array; // true
+
+class MyOtherArray extends Array {
+  static get [Symbol.species]() {
+    Array;
+  }
+}
+
+let array2 = new MyOtherArray(1, 2, 3, 4);
+array2 instanceof Array; // true
+array2 instanceof MyOtherArray; // true
+array2.slice(1, 3) instanceof MyOtherArray; // false
+```
+
+### new.target (in a class constructor)
+
+`new.target` used to indicate how a class is being invoked.
+
+`new.target` is set to the class that is being instantiated
+
+```js
+class Rectangle {
+  constructor(length, width) {
+    console.log(new.target === Rectangle);
+    this.length = length;
+    this.width = width;
+  }
+}
+
+new Rectangle(5, 8); // true
+
+class Square extends Rectangle {
+  constructor(length) {
+    super(length, length);
+  }
+}
+
+new Square(5); // false
+```
+
+Useful for creating abstract classes:
+
+
+```js
+class Shape {
+  constructor() {
+    if (new.target === Shape) {
+      throw new Error("Abstract class must be implemented");
+    }
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(length, width) {
+    super();
+  }
+}
+
+new Rectangle(5, 8);
+new Shape(); // Error: Abstract class must be implemented
+```
