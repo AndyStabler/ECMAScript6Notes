@@ -116,6 +116,11 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Inheriting from Built-Ins](#inheriting-from-built-ins)
   * [The Symbol.species property](#the-symbolspecies-property)
   * [new.target (in a class constructor)](#newtarget-in-a-class-constructor)
+* [Arrays](#arrays)
+  * [Array.of](#arrayof)
+  * [Array.from](#arrayfrom)
+    * [Mapping](#mapping)
+    * [Iterables](#iterables-1)
 
 
 ## Naming - The most confusing part
