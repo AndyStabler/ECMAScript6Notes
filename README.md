@@ -2847,3 +2847,96 @@ class Rectangle extends Shape {
 new Rectangle(5, 8);
 new Shape(); // Error: Abstract class must be implemented
 ```
+
+## Arrays
+
+Before ECMAScript 6 there were two ways to create arrays, the literal syntax (`[1,2,3]`) and the Array constructor
+ `new Array(1, 2, 3)`.
+
+`Array.of` and `Array.from` make it easier to create arrays in ECMAScript 6
+
+### Array.of
+
+The Array constructor is whacky!
+
+```js
+new Array(2); // creates an array of length 2, with no elements
+new Array("2"); // creates an array containing "2"
+new Array(1, 2); // creates an array with two elements (1 and 2 respectively)
+```
+
+To simplify the creation of Arrays, the `Array.of` method was introduced.
+
+It creates an array containing the elements passed to the `of` method.
+
+```js
+Array.of(2); // [ 2 ]
+Array.of("2"); // [ "2" ]
+Array.of(1, 2); // [ 1, 2]
+```
+
+### Array.from
+
+Allows you to create an array from an array-like object (`arguments` and DOM elements)
+
+The ECMAScript 5 way:
+
+```js
+function makeArray(arrayLikeObj) {
+  return Array.prototype.slice.call(arrayLikeObj);
+}
+```
+
+The ECMAScript 6 way:
+
+```js
+Array.from(arrayLikeObj);
+```
+
+Array.from uses `this` inside the constructor to determine the type of array to return
+
+#### Mapping
+
+```js
+function timesTwo() {
+  return Array.from(arguments, (element) => element * 2);
+}
+
+timesTwo(1,2,3,4); // 2,  4, 6, 8
+```
+
+You can also pass in a `this` value that represents the context on which the mapping function should be executed:
+
+```js
+helper = {
+  timesTwo(element) {
+    return this.multiply(element, 2);
+  },
+
+  multiply(op1, op2) {
+    return op1 * op2;
+  }
+}
+
+function timesTwo() {
+  return Array.from(arguments, helper.timesTwo, helper);
+}
+
+timesTwo(1, 2, 3, 4); // 2, 4, 6, 8
+```
+
+#### Iterables
+
+`Array.from` can convert any object with a `Symbol.iterator` property.
+
+```js
+numbers = {
+  *[Symbol.iterator]() {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+};
+
+Array.from(numbers, (num) => num * 2); // 2, 4, 6
+```
