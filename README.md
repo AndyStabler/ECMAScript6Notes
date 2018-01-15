@@ -114,6 +114,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Inherited Static Members](#inherited-static-members)
   * [Derived Classes from Expressions](#derived-classes-from-expressions)
   * [Inheriting from Built-Ins](#inheriting-from-built-ins)
+  * [The Symbol.species property](#the-symbolspecies-property)
+  * [new.target (in a class constructor)](#newtarget-in-a-class-constructor)
 
 
 ## Naming - The most confusing part
