@@ -2947,3 +2947,35 @@ numbers = {
 
 Array.from(numbers, (num) => num * 2); // 2, 4, 6
 ```
+
+### New methods on Arrays
+
+#### find
+
+```js
+[11,22,33].find((element) => element % 2 == 0); // 22
+```
+
+#### findIndex
+
+```js
+[11,22,33].findIndex((element) => element % 2 == 0); // 1
+```
+
+find and findIndex are good for finding an element that matches a condition. If you know the value you're looking
+for though, stick with `IndexOf` and `lastIndexOf`
+
+#### fill
+
+```js
+[0, 1, 2, 3].fill(4); // [4, 4, 4, 4]
+
+// pass a start index
+[1, 2, 3, 4].fill(4, 1); // [1, 4, 4, 4]
+
+// pass an exclusice end index
+[1, 2, 3, 4].fill(6, 1, 3); // [1, 6, 6, 4]
+
+// pass a negative index to look backwards from the end of the arrau
+[1, 2, 3, 4, 5].fill(6, -2); // [1, 2, 3, 6, 6]
+```
