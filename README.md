@@ -121,6 +121,12 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Array.from](#arrayfrom)
     * [Mapping](#mapping)
     * [Iterables](#iterables-1)
+  * [New methods on Arrays](#new-methods-on-arrays)
+    * [find](#find)
+    * [findIndex](#findindex)
+    * [fil](#fill)
+    * [copyWithin](#copywithin)
+    
 
 
 ## Naming - The most confusing part
