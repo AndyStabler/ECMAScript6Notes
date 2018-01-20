@@ -2962,7 +2962,7 @@ Array.from(numbers, (num) => num * 2); // 2, 4, 6
 [11,22,33].findIndex((element) => element % 2 == 0); // 1
 ```
 
-find and findIndex are good for finding an element that matches a condition. If you know the value you're looking
+`find` and `findIndex` are good for finding an element that matches a condition. If you know the value you're looking
 for though, stick with `IndexOf` and `lastIndexOf`
 
 #### fill
@@ -2979,3 +2979,14 @@ for though, stick with `IndexOf` and `lastIndexOf`
 // pass a negative index to look backwards from the end of the arrau
 [1, 2, 3, 4, 5].fill(6, -2); // [1, 2, 3, 6, 6]
 ```
+
+#### copyWithin
+
+Like fill, but the element to fill is
+
+```js
+[1, 2, 3, 4, 5, 6,  7].copyWithin(2, 0); // [1, 2, 1, 2, 3, 4, 5]
+[1, 2, 3, 4, 5, 6,  7].copyWithin(2, 0, 2); // [1, 2, 1, 2, 5, 6, 7]
+```
+
+`fill` and `copyWithin` are useful for typed arrays
