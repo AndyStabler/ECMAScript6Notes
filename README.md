@@ -2996,3 +2996,29 @@ Like fill, but the element to fill is
 ```
 
 `fill` and `copyWithin` are useful for typed arrays
+
+### Typed Arrays
+
+* Designed to work with numeric types
+* Introduced to give fast bitwise arithmetic
+  * arithmetic was slow as numbers stored as 64 bit floating point and converted to 32 bit ints as needed
+* Any number treated as an array of bits and use the familiar methods available on arays
+
+### Numeric data types
+
+* JS numbers are stored in IEEE 754 format – 64 bits store floating representation of the number
+  * This format used to represent integers _and_ floats in JS
+* Typed arrays allow storage and manipulation of eight numeric types:
+  1. int8
+  2. uint8
+  3. int16
+  4. uint16
+  5. int32
+  6. uint32
+  7. float32
+  8. float64
+
+* Storing an int8 as a normal JS number wastes 56 bits
+  * Storing numbers more efficiently is a case for _typed arrays_
+* To use operations on typed arrays you'll first need to create an _Array Buffer_ to store the data
+
