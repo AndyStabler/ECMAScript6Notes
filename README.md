@@ -126,6 +126,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [findIndex](#findindex)
     * [fil](#fill)
     * [copyWithin](#copywithin)
+    * [Typed Arrays](#typed-arrays)
+    * [Numeric data types](#numeric-data-types)
     
 
 
