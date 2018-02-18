@@ -3024,3 +3024,76 @@ Like fill, but the element to fill is
   * Storing numbers more efficiently is a case for _typed arrays_
 * To use operations on typed arrays you'll first need to create an _Array Buffer_ to store the data
 
+### Array Buffer
+
+* Foundation for all typed arrays
+* Memory location that contains a specified number of bytes
+* Like calling `malloc` in C – allocate memory without specifying what it contains
+* You can change the data in the buffer, but not the size of it once it's created
+
+```js
+let buffer = new ArrayBuffer(10); // buffer with 10 bytes
+buffer.byteLength; // 10
+
+let buffer2 = buffer.slice(4, 6); // creates a new buffer with data from bytes 4 and 5 of buffer
+buffer2.byteLength; // 2
+```
+
+### Manipulating Array Buffers with Views
+
+* Operate on (or a subset of) an array buffer
+* They read/write in one of the numeric types
+* `DataView` is a generic view on array buffers
+* Multple views for a single array buffer means using single memory location for entire application
+  instead of dynamically allocating space as needed
+
+```js
+let buffer = new ArrayBuffer(10),
+    view = new DataView(buffer), // view has access to all 10 bytes
+    restrictedView = new DataView(buffer, 5, 2); // access to bytes 5 and 6
+```
+
+#### Retrieving View information
+
+Following read-only properties are available:
+
+* `buffer` - the array buffer the view is tied to
+* `byteOffset` - second argument to the view constructor (0 by default)
+* `byteLength` - third argument to the view constructor (buffer's byteLength by default)
+
+#### Reading/Writing Data
+
+Following methods are available for each numeric data type
+
+_Little endian format is where the least significant bit is stored first_
+
+```js
+get<dataType>(byteOffset, littleEndian) – Read a <data_type> starting at byteOffset
+set<dataType>(byteOffset, value, littleEndian) - Sets a <data_type> starting at byteOffset
+```
+
+```js
+let buffer = new ArrayBuffer(2); // 2 byte array
+let view = new DataView(buffer);
+
+view.setInt8(0, 5); // setting first byte to 5
+view.setInt8(1, -1); // setting second byte to -1
+
+view.getInt8(0); // 5
+view.getInt8(1); // -1
+
+// other data type methods are available through the view too:
+
+view.getInt16(0); // (byte 1) 00000101 (byte 2) 11111111 (all together now) 0000010111111111 = 1535
+```
+
+Although other data type methods are available on `DataViews` if you just need to use one data type, then the type
+specific views might be more appropriate.
+
+#### Typed Arrays are views
+
+* Instead of using a generic `DataView` object to interact with an array buffer, you can use a typed array when
+you want to enforce the data type.
+
+* Theres a typed array for each of the numeric types (and one extra for uint8).
+  * Uint8ClampedArray - this converts numbers less than 0 to 0 and numbers greater than 255 to 255
