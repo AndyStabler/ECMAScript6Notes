@@ -128,6 +128,11 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [copyWithin](#copywithin)
     * [Typed Arrays](#typed-arrays)
     * [Numeric data types](#numeric-data-types)
+    * [Array Buffer](#array-buffer)
+    * [Manipulating Array Buffers with Views](#manipulating-array-buffers-with-views)
+    * [Retrieving View information](#retrieving-view-information)
+    * [Reading/Writing Data](#readingwriting-data)
+    * [Typed Arrays are views](#typed-arrays-are-views)
     
 
 
