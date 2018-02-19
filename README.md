@@ -3097,3 +3097,41 @@ you want to enforce the data type.
 
 * Theres a typed array for each of the numeric types (and one extra for uint8).
   * Uint8ClampedArray - this converts numbers less than 0 to 0 and numbers greater than 255 to 255
+
+#### Creating Type Specific Views
+
+```js
+// giving the view a buffer
+let buffer = new ArrayBuffer(10),
+    view1 = new Int8Array(buffer),
+    view2 = new Int8Array(buffer, 5, 2);
+
+view1.buffer === view2.buffer; // true
+
+// giving the view the number of elements to allocate in a buffer
+let ints = new Int16Array(2); // creates a view and a buffer with 2 elements (total of 4 bytes)
+let floats = new Float32Array(5); // create a view and a buffer with 5 elements (total of 20 bytes)
+
+ints.byteLength; // 4
+floats.byteLength; // 20
+
+// Pass an object to the view
+let oldArray = new Int8Array(5);
+let newArray = new Int8Array(oldArray); // passing a typed array to the constructor
+oldArray.buffer === newArray.buffer; // false – a clone is created
+
+// you can pass:
+//   * a typed array (^)
+//   * an iterable
+//   * an array (or an array like object, where it behaves the same as an aray)
+// a new typed array is created in each of these instances
+```
+
+Each typed array has the `BYTES_PER_ELEMENT` constant defined on the constructor and the instance:
+
+```js
+let array = new Int8Array(5);
+array.BYTES_PER_ELEMENT; // 1
+
+Float32Array.BYTES_PER_ELEMENT; // 4
+```
