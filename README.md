@@ -133,6 +133,7 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [Retrieving View information](#retrieving-view-information)
     * [Reading/Writing Data](#readingwriting-data)
     * [Typed Arrays are views](#typed-arrays-are-views)
+    * [Creating Type Specific Views](#creating-type-specific-views)
     
 
 
