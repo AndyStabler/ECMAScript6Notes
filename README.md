@@ -3141,3 +3141,43 @@ array.BYTES_PER_ELEMENT; // 1
 
 Float32Array.BYTES_PER_ELEMENT; // 4
 ```
+
+
+### Similarities Between Typed and Regular Arrays
+
+* Can access elements using an index `new Int8Array([1,2,3,4])[0]; // 1`
+* A lot of the same methods are available to Typed Arrays and Arrays
+  * When an array is usually returned (e.g. `array.map`) a typed array will be returned. This is because of
+  `Symbol.species`
+* The same iterators are available (`entries()`, `keys()`, and `values()`). This means the spread operator and
+`for-loop`s are available, just like with regular arrays.
+* `from` and `to` methods are available, e.g. `Int8Array.of(1, 2, 3, 4, 5); Int8Array.from([1,2,3,4,5]);`
+
+### Differences between Typed and Regular Arrays
+
+* Typed arrays' size cannot be altered – the `length` property is non-writable
+* Typed arrays don't inherit from `Array`, e.g. `Array.isArray(new Int8Array()); // false`
+* Typed arrays use type checking to make sure only the correct data is stored in the array
+  * 0 is used in place of invalid elements: `new Int8Array(["Hiya"])[0]; // 0`
+* Following methods are not available for typed arrays
+  * `concat` - result of a concat could be uncertain (concatting arrays of different types)
+  * `shift` - can change size of array
+  * `pop` - can change size of array
+  * `splice` - can change size of array
+  * `push` - can change size of array
+  * `unshift` - can change size of array
+* Following extra methods are available for typed arrays
+  * `set` – sets some elements of the typed array
+    ```js
+    let ints = new Int8Array(4);
+    ints.set([2,3]);
+    ints.set([5, 8], 2); // 2 is the offset
+    ints.toString(); // [2, 3, 5, 8]
+    ```
+  * `subarray` – the opposite of `set`. It extracts part of a typed array into another typed array
+    ```js
+    let ints = new Int8Array([1, 3, 5, 8, 13]);
+    ints.subarray(); // Int8Array [ 1, 2, 3, 4 ]
+    ints.subarray(2); // Int8Array [ 5, 8, 13]
+    ints.subarray(2, 3); // Int8Array [ 5 ] – the end index is exclusive
+    ```
