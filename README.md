@@ -134,6 +134,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [Reading/Writing Data](#readingwriting-data)
     * [Typed Arrays are views](#typed-arrays-are-views)
     * [Creating Type Specific Views](#creating-type-specific-views)
+    * [Similarities Between Typed and Regular Arrays](#similarities-between-typed-and-regular-arrays)
+    * [Differences between Typed and Regular Arrays](#differences-between-typed-and-regular-arrays)
     
 
 
