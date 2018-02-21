@@ -3183,3 +3183,57 @@ Float32Array.BYTES_PER_ELEMENT; // 4
     ints.subarray(2); // Int8Array [ 5, 8, 13]
     ints.subarray(2, 3); // Int8Array [ 5 ] – the end index is exclusive
     ```
+
+## Promises and Asynchronous Programming
+
+* Promises are good because they mean you can avoid _callback hell_, which sounds a bit scary.
+* 3 methods for asynchronous programming:
+  a. event based – `button.onClick = theMethod;`
+  b. callback pattern – `readFile("example.txt", function(err, contents) { ... });
+  c. promises
+
+### Promise Basics
+
+* Function returns a promise – instead of subscribing to an event, or passing callback to a function
+
+#### The Promise Life Cycle
+
+Three states that promises can be in:
+
+1. Pending (_unsettled_) – async operation hasn't completed yet
+2. Fulfilled (_settled_) – async operation completed successfully
+3. Rejected (_setled_) – asyn oepration failed
+
+* An internal `[[PromiseState]]` stores the promise's state. This is internal though and can't be accessed.
+* You can take some action when a promise _changes state_ using the `then()` method.
+* `then()` available on all promises
+  * objects that implement `then()` are called a _thenable_
+  * All promises are _thenable_s, but not all thenables area promises.
+
+```js
+let promise = readFile("example.txt");
+
+promise.then(successFunction, errorFunction);
+promise.then(successFunction);
+promise.then(null, errorFunction); // this and the example below are the same
+promise.catch(errorFunction);
+```
+* This approach clearly indicates whether the operation succeeded
+  * Events don't always fire when there's an error
+  * Callbacks must always check the error argument (leads to lots of duplication when in _callback hell_
+* Fulfillment/rejection handlers are still executed even if it's added to the job queue after the promise has
+_settled_:
+  ```js
+  let promise = readFile("example.txt");
+
+  promise.then(function(contents) {
+    console.log(contents);
+
+    // even though the promise is setled, this will still be executed
+    promise.then(function(contents) {
+      console.log(contents);
+    });
+  });
+  ```
+* `then()` and `call()` are handlers that are put on the job queue that is strictly reserved for promises.
+
