@@ -135,8 +135,10 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [Typed Arrays are views](#typed-arrays-are-views)
     * [Creating Type Specific Views](#creating-type-specific-views)
     * [Similarities Between Typed and Regular Arrays](#similarities-between-typed-and-regular-arrays)
-    * [Differences between Typed and Regular Arrays](#differences-between-typed-and-regular-arrays)
-    
+    * [Differences between Typed and Regular Arrays](#differences-between-typed-and-regular-arrays)\
+* [Promises and Asynchronous Programming](#promises-and-asynchronous-programming)
+  * [Promise Basics](#promise-basics)
+    * [The Promise Life Cycle](#the-promise-life-cycle)
 
 
 ## Naming - The most confusing part
