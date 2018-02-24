@@ -135,8 +135,10 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [Typed Arrays are views](#typed-arrays-are-views)
     * [Creating Type Specific Views](#creating-type-specific-views)
     * [Similarities Between Typed and Regular Arrays](#similarities-between-typed-and-regular-arrays)
-    * [Differences between Typed and Regular Arrays](#differences-between-typed-and-regular-arrays)
-    
+    * [Differences between Typed and Regular Arrays](#differences-between-typed-and-regular-arrays)\
+* [Promises and Asynchronous Programming](#promises-and-asynchronous-programming)
+  * [Promise Basics](#promise-basics)
+    * [The Promise Life Cycle](#the-promise-life-cycle)
 
 
 ## Naming - The most confusing part
@@ -3188,9 +3190,10 @@ Float32Array.BYTES_PER_ELEMENT; // 4
 
 * Promises are good because they mean you can avoid _callback hell_, which sounds a bit scary.
 * 3 methods for asynchronous programming:
-  a. event based – `button.onClick = theMethod;`
-  b. callback pattern – `readFile("example.txt", function(err, contents) { ... });
-  c. promises
+
+  1. event based – `button.onClick = theMethod;`
+  2. callback pattern – `readFile("example.txt", function(err, contents) { ... });
+  3. promises
 
 ### Promise Basics
 
@@ -3208,7 +3211,7 @@ Three states that promises can be in:
 * You can take some action when a promise _changes state_ using the `then()` method.
 * `then()` available on all promises
   * objects that implement `then()` are called a _thenable_
-  * All promises are _thenable_s, but not all thenables area promises.
+  * All promises are _thenable_ s, but not all thenables area promises.
 
 ```js
 let promise = readFile("example.txt");
