@@ -139,6 +139,23 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
 * [Promises and Asynchronous Programming](#promises-and-asynchronous-programming)
   * [Promise Basics](#promise-basics)
     * [The Promise Life Cycle](#the-promise-life-cycle)
+    * [Unsettled Promises](#unsettled-promises)
+    * [Settled Promises](#settled-promises)
+      * [Non-promise Thenables](#non-promise-thenables)
+    * [Executor Errors](#executor-errors)
+  * [Rejection Handling](#rejection-handling)
+  * [Chaining Promises](#chaining-promises)
+    * [Catching Errors](#catching-errors)
+    * [Returning Values in Promise Chains](#returning-values-in-promise-chains)
+    * [Returning Promises in Promise Chains](#returning-promises-in-promise-chains)
+  * [Responding to Multiple Promises](#responding-to-multiple-promises)
+    * [Promise.all()](#promiseall)
+    * [Promise.race()](#promiserace)
+    
+    
+  
+    
+     
 
 
 ## Naming - The most confusing part
