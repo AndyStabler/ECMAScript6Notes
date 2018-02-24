@@ -3237,3 +3237,373 @@ _settled_:
   ```
 * `then()` and `call()` are handlers that are put on the job queue that is strictly reserved for promises.
 
+#### Unsettled Promises
+
+* Create promises with the `Promise` constructor
+  * Function takes a single _executor_ argument. This is the code to initialise the promise.
+* An _executor_ is a function that takes two arguments– `resolve()` and `reject()`
+  * `resolve()` is called when the executor finished successfully
+  * `reject()` is called when the executor fails
+
+```js
+const fs = require("fs");
+
+function readFile(filename) {
+  return new Promise(function(resolve, reject) {
+    // this runs immediately. When reject or resolve are hit, a job is put onto the job queue to reject/resolve
+    // the promise.
+    fs.readFile(filename, { encoding: "utf-8" }, function(err, contents) {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve(contents);
+    });
+  });
+}
+
+let promise = readFile("example.txt");
+// then is called asynchronously– a job is put onto the job queue for execution later
+promise.then(function(contents) {
+  console.log(contents);
+}, function(err) {
+  console.error(err.message);
+});
+```
+
+#### Settled Promises
+
+* `Promise.resolve` takes a single argument and returns a promise in the fulfilled state
+* No job scheduling takes place
+* A handler must be addeded to the promise to retrieve the value
+* A rejection handler added to a promise created with `resolve()` would never be called
+
+```js
+let promise = Promise.resolve(42);
+
+promise.then(function(value) {
+  console.log(value);
+});
+```
+
+* `Promise.reject` does the same thing but returns a promise in the rejected state
+* A resoleve handler would never be called for this promise
+
+```js
+let promise = Promise.reject(42);
+
+promise.catch(function(value) {
+  console.error(value);
+});
+```
+
+##### Non-promise Thenables
+
+* `Promise.resolve()` and `Promise.reject()` can take non-promise thenables as arguments
+  * These methods create a new promise called after the `then()` function
+
+```js
+// a non-promise thenable
+let thenable = {
+  then(resolve, reject) {
+    resolve(42);
+  }
+};
+
+// this calls `thenable.then()` so a promise state can be determined
+// promise state for thenable is fulfilled because `then()` calls `resolve(42)`
+let promise = Promise.resolve(thenable);
+
+promise.then(function(value) {
+  console.log(value);
+});
+
+// the same applies for creating promises in a rejected state
+let thenableRejection = {
+  // when then is executed it creates a new promise in the rejected state
+  then(resolve, reject) {
+    reject(42);
+  }
+};
+
+let promiseRejection = Promise.resolve(thenableRejection);
+promiseRejection.catch(function(value){
+  console.error(value);
+});
+```
+
+* When you pass a promise to `Promise.resolve()` or `Promise.reject()` it is returned without being changed
+  * This is useful for when you aren't sure if an object is a promise. Pass it to `Promise.resolve()` or
+  `Promise.reject()` and it will pass through unchanged
+
+#### Executor Errors
+
+* All executors have an implicit try-catch, so that errors are caught and passed to the rejection handler
+* If a rejection handler isnt't given, then errors are ignored - this is deprecated functionality in node.js
+
+```js
+let promise = new Promise(function(resolve, reject) {
+  throw new Error("Whoops!");
+});
+
+promise.catch(function(error) {
+  console.log(error.message); // Explosion
+});
+```
+
+### Rejection Handling
+
+* In node.js you can use the following event handlers:
+
+```js
+process.on("unhandledRejection", function(reason, promise) { ... });
+process.on("rejectionHandled", function(promise) { ... });
+```
+
+* In the browser you can use the following event handlers:
+
+```js
+window.onunhandledrejection = function(event) {
+  console.log(event.type);
+  console.log(event.reason.message);
+  console.log(event.promise);
+}
+
+window.onrejectionjandled = function(event) {
+  console.log(event.type);
+  console.log(event.reason.message);
+  console.log(event.promise);
+};
+```
+
+### Chaining Promises
+
+* Chaining promises allows for complex asynchronous behaviour
+* Each call to `then()` and `catch()` creates and returns another promise.
+  * The new promise is resolved when the first one has been fulfilled or rejected
+  * The second `then()` fulfillment handler is called after the first promise has been resolved
+  ```js
+  let promise = new Promise(function(resolve, reject) {
+    resolve(42);
+  });
+
+  promise.then(function(value) {
+    console.log("First promise " + value);
+  }).then(function(){
+    console.log("Finished");
+  });
+  ```
+
+#### Catching Errors
+
+```js
+let promise = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+promise.then(function(value) {
+  throw new Error("Whoops!");
+}).catch(function(error) {
+  console.error(error.message); // Whoops
+});
+
+
+let promise2 = new Promise(function(resolve, reject) {
+  throw new Error("Whoops!");
+});
+
+promise2.then(function(value) {
+  console.log(value);
+}).catch(function(error) {
+  console.log(error.message);
+});
+```
+
+* It's a good idea to have a rejection handler at the end of a promise chain
+
+#### Returning Values in Promise Chains
+
+* You can pass values along in a promise chain using `return value`
+* A rejection handler can take care of an error and let the rest of the chain continue
+
+```js
+let promise = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+promise.then(function(value) {
+  console.log(value); // 42
+  return value + 1;
+}).then(function(value) {
+  console.log(value); // 43
+});
+
+
+// same applies for rejections
+
+let promise2 = new Promise(function(resolve, reject){
+  reject(42);
+});
+
+promise2.catch(function(value) {
+  console.log(value); // 42
+  return value + 1;
+}).then(function(value) {
+  console.log(value); // 43
+});
+```
+
+#### Returning Promises in Promise Chains
+
+* Note that the second fulfillment handler is not added to p2, but to a new promise.
+  * This is important because if the first fulfillment handler fails, then the second fulfillment handler
+  will not be called.
+
+```js
+let p1 = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+let p2 = new Promise(function(resolve, reject) {
+  resolve(43);
+});
+
+p1.then(function(value) {
+  // then() returns a new promise, whose fulfillment handler returns p2
+  // then() does not return p2 here
+  console.log(value); // 42
+  return p2;
+}).then(function(value) {
+  console.log(value); // 43
+});
+
+// this is the same as
+
+let p3 = p1.then(function(value) {
+  console.log(value); // 42
+  return p2;
+});
+
+p3.then(function(value) {
+  console.log(value); // 43
+});
+```
+
+* You can return a promise from a fulfillment handler is you only want it to execute
+when another promise has successfully completed:
+
+```js
+// here the first and second fulfillment handlers are executed immediately after calling resolve(42)
+let p1 = new Promise(function(resolve, reject) {
+  // big calculation here
+  resolve(42);
+});
+
+p2 = p1.then(function(value) {
+  // first fulfillment handler
+  console.log(42);
+});
+
+p2.then(function(value) {
+  // second fulfillment handler
+  console.log("Finished");
+});
+
+// here the second fulfillment handler is only executed after the first has completed
+let p1 = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+p1.then(function(value) {
+  console.log(value);
+  let p2 = new Promise(function(resolve, reject) {
+    resolve("After p1 has completed");
+  });
+  return p2;
+}).then(function(value) {
+  // this won't execute until p2 is fulfilled
+  console.log(value);
+});
+```
+
+### Responding to Multiple Promises
+
+* Sometimes it's useful to monitor progress of multiple promises
+* ECMAScript 6 offers two methods to keep track of multiple promises:
+  * `Promise.all()`
+  * `Promise.race()`
+
+#### Promise.all()
+
+* Takes an iterable of promises
+* Returns a new promise that is resolved only when every promise passed in is resolved
+
+```js
+let p1 = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+let p2 = new Promise(function(resolve, reject) {
+  resolve(43);
+});
+
+let p3 = new Promise(function(resolve, reject) {
+  resolve(44);
+});
+
+let p4 = Promise.all([p1, p2, p3]);
+p4.then(function(value) {
+  console.log(Array.isArray(value)); // true
+  console.log(value[0]); // 42
+  console.log(value[1]); // 43
+  console.log(value[2]); // 44
+});
+```
+
+* If any promise passed to `Promise.all()` is rejected, then the returned promise is rejected without waiting for
+the others to complete:
+
+```js
+let p1 = new Promise(function(resolve, reject) {
+  resolve(42);
+});
+
+let p2 = new Promise(function(resolve, reject) {
+  reject(43);
+});
+
+let p3 = new Promise(function(resolve, reject) {
+  resolve(44);
+});
+
+let p4 = Promise.all([p1, p2, p3]);
+p4.catch(function(value) {
+  console.log(Array.isArray(value)); // false
+  console.log(value); // 43
+});
+```
+
+#### Promise.race()
+
+* Takes an iterable of promises
+* Returns a promise that is settled as soon as the first of any of the promises is settled
+* If the first promise to settle is fulfilled, then the returned promise is fulfilled
+* If the first promise to settle is rejected, then the returned promise is rejected
+
+```js
+let p1 = Promise.resolve(42); // fulfilled promise
+
+let p2 = new Promise(function(resolve, reject) {
+  resolve(43);
+});
+
+let p3 = new Promise(function(resolve, reject) {
+  resolve(44);
+});
+
+let p4 = Promise.race([p1, p2, p3]);
+p4.then(function(value) {
+  console.log(value); // 42
+});
+```
