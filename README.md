@@ -1,6 +1,6 @@
 # ECMAScript 6 notes
 
-A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.com/slicknet)'s amazing book [Understanding ECMAScript 6](http://amzn.eu/iA7V2fr).
+A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.com/slicknet)'s amazing book [Understanding ECMAScript 6](http://amzn.eu/iA7V2fr). He's kindly permitted these notes to be public– I hope others find them useful.
 
 ## Contents
 
@@ -844,7 +844,7 @@ console.log(func()); // 5
   * object has default behaviour for the essential internal methods that must be supported by all objects
 2. Exotic objects
   * object does **not** have default behaviour for the essential internal methods that must be supported by all objects
-  * Any object not an ordinary object is an exostic one.
+  * Any object not an ordinary object is an exotic one.
 3. Standard objects
   * object whose semantics are defined by ECMAScript 6 specification
 4. Built-in objects
@@ -3626,4 +3626,91 @@ let p4 = Promise.race([p1, p2, p3]);
 p4.then(function(value) {
   console.log(value); // 42
 });
+```
+
+## Proxies and the Reflection API
+
+Proxies let you create code that sits in between objects and the JavaScript engine, giving some powerful control
+over how objects behave.
+
+The following can't be achieved for custom objects in < ECMAScript 6:
+
+```js
+let array = [1, 2, 3];
+
+array.length; // 3
+
+array[3] = 4;
+
+array.length; // 4 – the length property was updated
+
+array.length = 2;
+
+array; // [1, 2] – changing the length of the array removes elements
+```
+
+_This behaviour means array objects are exotic._
+
+* Proxies virtualise targets (they pretend to be like a target)
+* Traps are functions that intercept low level operations on a target
+* `Reflect` object contains methods that provide default behaviour for the same methods that proxies can override
+* There is a `Reflect` methods for every proxy trap:
+
+|Proxy trap                      |overrides                        |default behaviour available at|
+|--------------------------------|---------------------------------|------------------------------|
+|get                             |reading a property value         |Reflect.get()                 |
+|set                             |writing to a property            |Reflect.set()                 |
+|has                             |the `in` operator                |Reflect.has()                 |
+|deleteProperty                  |the `delete` operator            |Reflect.deleteProperty()      |
+|getPrototypeOf                  |`Object.getPrototypeOf`          |Reflect.getPrototypeOf()      |
+|setPrototypeOf                  |`Object.setPrototypeOf`          |Reflect.setPrototypeOf()      |
+|isExtensible                    |`Object.isExtensible`            |Reflect.isExtensible()        |
+|preventExtensions               |`Object.preventExtensions`       |Reflect.preventExtensions()   |
+|getOwnPropertyDescriptor        |`Object.getOwnPropertyDescriptor`|Reflect.getOwnPropertyNames() |
+|defineProperty                  |`Object.defineProperty`          |Reflect.defineProperty()      |
+|ownKeys                         |`Object.keys`<br/>`Object.getOwnPropertyNames()`<br/>`Object.getOwnPropertySymbols()`|Reflect.ownKeys()|
+|apply                           |calling a function               |Reflect.apply()               |
+|construct                       |calling a function with new      |Reflect.construct()           |
+
+
+### Creating a proxy
+
+* A handler is an object that has trap methods defined on it
+
+```js
+let target = {};
+
+// The handler is empty, so the default behaviour will be called for each method
+let proxy = new Proxy(target, {});
+
+proxy.name = "Proxy";
+
+proxy.name; // Proxy
+target.name; // Proxy – the proxy calls the default behaviour, so the target's name is updated
+```
+
+Here's an example that adds a trap method
+
+```js
+let target = {
+  name: "Andy"
+};
+
+let handler = {
+  set(trapTarget, key, value, receiver) {
+    if(key === "age" && isNaN(value)) {
+      throw new TypeError("Age must be a number");
+    }
+
+    // The value is valid, so just call the default set() implementation
+    return Reflect.set(trapTarget, key, value, receiver);
+  }
+};
+
+let proxy = new Proxy(target, handler);
+proxy.name = "Rupert";
+proxy.name; // Rupert
+proxy.age = 5;
+proxy.age; // 5
+proxy.age = "sdaf" // TypeError: Age must be a number
 ```
