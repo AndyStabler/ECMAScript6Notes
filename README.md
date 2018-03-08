@@ -3209,7 +3209,7 @@ Float32Array.BYTES_PER_ELEMENT; // 4
 * 3 methods for asynchronous programming:
 
   1. event based – `button.onClick = theMethod;`
-  2. callback pattern – `readFile("example.txt", function(err, contents) { ... });
+  2. callback pattern – `readFile("example.txt", function(err, contents) { ... });`
   3. promises
 
 ### Promise Basics
