@@ -151,11 +151,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Responding to Multiple Promises](#responding-to-multiple-promises)
     * [Promise.all()](#promiseall)
     * [Promise.race()](#promiserace)
-    
-    
-  
-    
-     
+* [Proxies and the Reflection API](#proxies-and-the-reflection-api)
+  * [Creating a proxy](#creating-a-proxy)
 
 
 ## Naming - The most confusing part
