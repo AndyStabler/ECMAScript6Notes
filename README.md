@@ -3714,3 +3714,8 @@ proxy.age = 5;
 proxy.age; // 5
 proxy.age = "sdaf" // TypeError: Age must be a number
 ```
+
+* Sometimes the Reflect method and Object methods look the same and you might be tempted to just call
+the Object method from your trap method. This is bad practice because sometimes the return types are different, as
+is the case for `Reflect.setPrototypeOf()` and `Object.setPrototypeOf()` where `Reflect.setPrototypeOf()` returns
+false and `Object.setPrototypeOf()` throws an error when the prototype cannot be set.
