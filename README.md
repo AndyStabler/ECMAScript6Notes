@@ -151,11 +151,8 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Responding to Multiple Promises](#responding-to-multiple-promises)
     * [Promise.all()](#promiseall)
     * [Promise.race()](#promiserace)
-    
-    
-  
-    
-     
+* [Proxies and the Reflection API](#proxies-and-the-reflection-api)
+  * [Creating a proxy](#creating-a-proxy)
 
 
 ## Naming - The most confusing part
@@ -3715,7 +3712,7 @@ proxy.age; // 5
 proxy.age = "sdaf" // TypeError: Age must be a number
 ```
 
-* Sometimes the Reflect method and Object methods look the same and you might be tempted to just call
-the Object method from your trap method. This is bad practice because sometimes the return types are different, as
+* Sometimes the `Reflect` method and `Object` methods look the same and you might be tempted to just call
+the `Object` method from your trap method. This is bad practice because sometimes the return types are different, as
 is the case for `Reflect.setPrototypeOf()` and `Object.setPrototypeOf()` where `Reflect.setPrototypeOf()` returns
 false and `Object.setPrototypeOf()` throws an error when the prototype cannot be set.
