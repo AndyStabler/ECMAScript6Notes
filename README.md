@@ -3716,3 +3716,93 @@ proxy.age = "sdaf" // TypeError: Age must be a number
 the `Object` method from your trap method. This is bad practice because sometimes the return types are different, as
 is the case for `Reflect.setPrototypeOf()` and `Object.setPrototypeOf()` where `Reflect.setPrototypeOf()` returns
 false and `Object.setPrototypeOf()` throws an error when the prototype cannot be set.
+
+### Using Proxies for model validation
+
+#### Checking argument types
+
+```js
+function speak(message) {
+  console.log(`Raising your head, you declare to the room "${message}"`);
+}
+
+let speakProxy = new Proxy(speak, {
+  apply(trapTarget, thisArg, argumentsList) {
+    if (argumentsList.length != 1) {
+      throw new Error("Please say one thing at a time");
+    }
+    if (typeof argumentsList[0] !== "string") {
+      throw new TypeError("Please use your words");
+    }
+
+    Reflect.apply(trapTarget, thisArg, argumentsList);
+  }
+});
+
+speakProxy("Wingardium Leviosa"); // Raising your head, you declare to the room "Wingardium Leviosa"
+speakProxy("Wingardium Leviosa", "Accio Firebolt!"); // Error: Please say one thing at a time
+speakProxy(42); // TypeError: Please use your words
+```
+
+#### Checking typos on property names
+
+```js
+let friend = {
+  name: "Luna Lovegood",
+  house: "Ravenclaw",
+  patronus: "Hare",
+};
+
+friend.house; // Ravenclaw
+friend.hoose; // undefined – Let's raise an error here
+
+let friendProxy = new Proxy(friend, {
+  get(trapTarget, key, receiver) {
+    if (!(key in receiver))
+      throw new TypeError("Property not recognised");
+    return Reflect.get(trapTarget, key, receiver);
+  }
+});
+
+friend.house; // Ravenclaw
+friend.hoose; // undefined (still)
+
+friendProxy.house; // Ravenclaw
+friendProxy.hoose; // TypeError: Property not recognised.
+```
+
+Same can be acheived when setting a property too:
+
+```js
+let friend = {
+  name: "Andy Stabler",
+  house: "Hufflepuff",
+  patronus: undefined
+};
+
+friend.patronus = "Salmon";
+friend.patroonus = "Stag";
+friend;
+// { name: 'Andy Stabler',
+//  house: 'Hufflepuff',
+//  patronus: 'Salmon',
+//  patroonus: 'Stag' }
+// D'Oh!
+
+let friendProxy = new Proxy(friend, {
+  get(trapTarget, key, receiver) {
+    if (!(key in receiver))
+      throw new TypeError("Property not recognised.");
+    return Reflect.get(trapTarget, key, receiver);
+  },
+  set(trapTarget, key, value, receiver) {
+    if (!(key in receiver))
+      throw new TypeError("Property not recognised.");
+    Reflect.set(trapTarget, key, value, receiver);
+  }
+});
+
+delete friend.patroonus;
+friendProxy.patronus = "Stag";
+friendProxy.patroonus = "Wolf"; // TypeError: Property not recognised.
+```
