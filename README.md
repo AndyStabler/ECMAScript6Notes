@@ -3798,7 +3798,7 @@ let friendProxy = new Proxy(friend, {
   set(trapTarget, key, value, receiver) {
     if (!(key in receiver))
       throw new TypeError("Property not recognised.");
-    Reflect.set(trapTarget, key, value, receiver);
+    return Reflect.set(trapTarget, key, value, receiver);
   }
 });
 
