@@ -153,6 +153,9 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
     * [Promise.race()](#promiserace)
 * [Proxies and the Reflection API](#proxies-and-the-reflection-api)
   * [Creating a proxy](#creating-a-proxy)
+  * [Using Proxies for model validation](#using-proxies-for-model-validation)
+    * [Checking argument types](#checking-argument-types)
+    * [Checking typos on property names](#checking-typos-on-property-names)
 
 
 ## Naming - The most confusing part
