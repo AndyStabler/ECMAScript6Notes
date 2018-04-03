@@ -156,6 +156,12 @@ A lot (all?) of these notes are taken from [Nicholas C. Zakas](https://twitter.c
   * [Using Proxies for model validation](#using-proxies-for-model-validation)
     * [Checking argument types](#checking-argument-types)
     * [Checking typos on property names](#checking-typos-on-property-names)
+* [Modules](#modules)
+  * [Exporting](#exporting)
+  * [Importing](#importing)
+  * [Default values](#default-values-2)
+  * [Loading modules](#loading-modules)
+  * [Loading sequence](#loading-sequence)
 
 
 ## Naming - The most confusing part
@@ -3928,9 +3934,10 @@ as a module for it to be loaded as one:
   import { hiya } from "./example.js";
 </script>
 ```
+
 * Browsers that don't support a given script type will just ignore it.
 
-#### Loading sequence
+#### Loading sequence
 
 * In browsers the modules are loaded as if the defer keyword was used.
   * The modules are downloaded as soon as they are parsed from the DOM, but doesn't execute until the document
