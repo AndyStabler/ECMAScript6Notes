@@ -178,11 +178,6 @@ Work then began on ECMAScript Harmony. ECMAScript 6 was the child of this projec
 
 ECMAScript 6 == ECMAScript 2015.
 
-ECMAScript introduces a heck load of new stuff
-  * patterns
-  * syntax
-  * modules
-
 ## Block Bindings
 
 Declare bindings not accessible out of a block
@@ -3809,3 +3804,141 @@ delete friend.patroonus;
 friendProxy.patronus = "Stag";
 friendProxy.patroonus = "Wolf"; // TypeError: Property not recognised.
 ```
+
+## Modules
+
+* JS in modules runs in strict-mode
+* variables available in top level of module don't automatically leak out into global scope (they need to be
+explicitly exported first)
+* `this` in the top-level scope of a module is `undefined`,
+* Can't have HTML style comments in modules
+
+### Exporting
+
+```js
+// export variable
+export let name = "Andy";
+let number= "25";
+export { number as age };
+
+// export a function
+export function hiya() {
+  return "Hello, World!";
+}
+
+function seeYa() {
+  return "Bye, World!";
+}
+// can export the function later
+export seeYa;
+
+// not exported, and so is private to the module
+function calculate() {
+  return "Calculating...";
+}
+
+export class Rectangle {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+```
+
+* Every export has a name
+* Anonymous classes and functions can't be exported unless the `default` keyword is used
+
+
+### Importing
+
+```js
+// this imports the hiya and seeYa functions from exporting.js
+import { hiya, seeYa } from "./exporting.js"
+
+// this imports everything from exporting.js
+// note that we're giving a name to this import
+import * as exporting from "./exporting.js"
+exporting.hiya();
+
+// rename an imported function/variable
+import { age as theirAge } from "./example.js"
+```
+
+* Imported functions and variables are bound like `const`s so they can't be re-declared once imported
+* Two parts to an import statement– identifiers for what you want to import, and the module
+* You don't have to import everything from a module– just one of the functions is OK (or none)
+* Modules are imported just once. They're loaded into memory and used for each `import` for that module
+* Importing can be used to execute some code (not actually import something into our scope). For example, we may
+want to import a module that adds functionality to the Array object (adding a sample method say).
+
+#### Limitations
+
+* Modules cannot be loaded dynamically
+* They must be included at the top most scope
+  * `if (environmentIsProduction) import { example } from "./example.js";` - fails
+* `import` and `export` designed to be static, so it's easy for text editors to determine which information
+is available from a module
+
+### Default values
+
+```js
+export default function hiya() {
+  return "Hiya";
+}
+```
+
+```js
+function hiya() {
+  return "Hiya";
+}
+
+export default hiya;
+```
+
+```js
+function hiya() {
+  return "Hiya";
+}
+
+export default { hiya as greeting };
+```
+
+```js
+// note the lack of curly braces
+import hiya from "./example.js"
+
+// import the default function as hiya, and also import bye
+import hiya, { bye} from "./example.js"
+
+// import the default, but rename it to greeting. Also import bye
+import { hiya as greeting, bye } from "./example.js"
+```
+
+* Can only export one default value
+* Default values must be either a variable, function, or class
+
+### Loading modules
+
+* By default `<script>` tags in the browser don't load modules. You'd need to explicitly declare the script
+as a module for it to be loaded as one:
+
+```js
+<script type="module" src="example.js"></script>
+<script type="module">
+  import { hiya } from "./example.js";
+</script>
+```
+* Browsers that don't support a given script type will just ignore it.
+
+#### Loading sequence
+
+* In browsers the modules are loaded as if the defer keyword was used.
+  * The modules are downloaded as soon as they are parsed from the DOM, but doesn't execute until the document
+  has been fully parsed.
+* Modules are executed in the order they appear in the file
+* Modules are parsed completely to identify all the `import` statements.
+  * There may be nesting (one file imports another, which imports another)
+  * No modules are executed until all the imports have taken place.
+* You can add `async` to a `<script>` tag.
+  * The module may be executed before the DOM is loaded.
+  * All referenced modules will be loaded/executed before the `<script>` is executed, however.
